@@ -1,21 +1,28 @@
 
 package frc.robot.subsystems;
 
+import java.lang.ModuleLayer.Controller;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.XboxController;
 
-public class ArmSubsystem extends SubsystemBase {
+public class Intake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
   CANSparkMax leftMotor;
   CANSparkMax rightMotor;
+  XboxController xbox;
+  double speed = .5;
 
-  public ArmSubsystem() {
+
+  public Intake() {
     leftMotor = new CANSparkMax(0, MotorType.kBrushless);
     rightMotor = new CANSparkMax(1, MotorType.kBrushless);
+    xbox = new XboxController(0);
   } 
   /**
    * Example command factory method.
@@ -30,20 +37,32 @@ public class ArmSubsystem extends SubsystemBase {
           /* one-time action goes here */
         });
   }
+  public void intake(){
+    while(xbox.getAButton()){
+      leftMotor.set(speed);
+      rightMotor.set(speed);
+    } 
+
+  }
+  public void outtake(){
+    while(xbox.getBButton()){
+      leftMotor.set(speed*-1);
+      rightMotor.set(speed*-1);
+    } 
+
+  }
 
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+
   }
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+
   }
 
   public void intakeOn(){
-    leftMotor.set(1);
-    rightMotor.set(-1);
   }
 }
