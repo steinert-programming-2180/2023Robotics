@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.lang.ModuleLayer.Controller;
 import java.lang.reflect.Method;
 
 import com.revrobotics.CANSparkMax;
@@ -20,6 +21,7 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDrive DifDrive;
   MotorControllerGroup LeftMotors;
   MotorControllerGroup RightMotors;
+  XboxController controller = new XboxController(0);
   
   public DriveTrain() {
     L1 = new CANSparkMax(0, MotorType.kBrushless);
@@ -40,7 +42,7 @@ public class DriveTrain extends SubsystemBase {
   public void move(Double LeftSpeed, Double RightSpeed) {
     DifDrive.tankDrive(LeftSpeed, RightSpeed);
   }
-  
+     
   public CommandBase exampleMethodCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
@@ -49,7 +51,7 @@ public class DriveTrain extends SubsystemBase {
           /* one-time action goes here */
         });
   }
-
+  
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
@@ -62,6 +64,9 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    LeftMotors.set(controller.getLeftY());
+    RightMotors.set(controller.getRightY());
+
   }
 
   @Override
