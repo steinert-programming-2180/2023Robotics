@@ -4,17 +4,16 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class DriveCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveTrain driveTrainSub;
-  Joystick rightStick = new Joystick(0);
-  Joystick leftStick = new Joystick(1);
+  XboxController drivController;
   /**
    * Creates a new ExampleCommand.
    *
@@ -29,13 +28,13 @@ public class DriveCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    drivController = new XboxController(OperatorConstants.DriverControllerPort);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrainSub.move(leftStick.getY(), rightStick.getY());
+    driveTrainSub.move(drivController.getLeftY(), drivController.getRightY());
   }
 
   // Called once the command ends or is interrupted.

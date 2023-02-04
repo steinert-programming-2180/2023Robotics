@@ -4,43 +4,38 @@
 
 package frc.robot.subsystems;
 
-import java.lang.ModuleLayer.Controller;
-import java.lang.reflect.Method;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveTrainConstants;;
 
 public class DriveTrain extends SubsystemBase {
-  CANSparkMax L1, L2, L3, R1, R2, R3;
-  DifferentialDrive DifDrive;
+  CANSparkMax L1, L2, R1, R2;
+  DifferentialDrive difDrive;
+
   MotorControllerGroup LeftMotors;
   MotorControllerGroup RightMotors;
-  XboxController controller = new XboxController(0);
   
   public DriveTrain() {
-    L1 = new CANSparkMax(0, MotorType.kBrushless);
-    L2 = new CANSparkMax(1, MotorType.kBrushless);
-    L3 = new CANSparkMax(2, MotorType.kBrushless);
+    L1 = new CANSparkMax(DriveTrainConstants.leftMotorIds[0], MotorType.kBrushless);
+    L2 = new CANSparkMax(DriveTrainConstants.leftMotorIds[1], MotorType.kBrushless);
 
-    LeftMotors = new MotorControllerGroup(L1, L2, L3);
+    LeftMotors = new MotorControllerGroup(L1, L2);
 
-    R1 = new CANSparkMax(3, MotorType.kBrushless);
-    R2 = new CANSparkMax(4, MotorType.kBrushless);
-    R3 = new CANSparkMax(5, MotorType.kBrushless);
+    R1 = new CANSparkMax(DriveTrainConstants.rightMotorIds[0], MotorType.kBrushless);
+    R2 = new CANSparkMax(DriveTrainConstants.rightMotorIds[1], MotorType.kBrushless);
 
-    RightMotors = new MotorControllerGroup(R1, R2, R3);
+    RightMotors = new MotorControllerGroup(R1, R2);
 
-    DifDrive = new DifferentialDrive(LeftMotors, RightMotors);
+    difDrive = new DifferentialDrive(LeftMotors, RightMotors);
   }
   
   public void move(Double LeftSpeed, Double RightSpeed) {
-    DifDrive.tankDrive(LeftSpeed, RightSpeed);
+    difDrive.tankDrive(LeftSpeed, RightSpeed);
   }
      
   public CommandBase exampleMethodCommand() {
@@ -64,8 +59,6 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    LeftMotors.set(controller.getLeftY());
-    RightMotors.set(controller.getRightY());
 
   }
 
