@@ -21,9 +21,9 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final int[] leftMotorIds = {0, 1};
-    public static final int[] rightMotorIds = {0, 1};
+    public static final int[] leftMotorIds = {1,2,3};
+    public static final int[] rightMotorIds = {4,5,6};
   
-    public static final double maxSpeedLimit = .5;
+    public static final double speedMultiplier = .5;
   }
 }

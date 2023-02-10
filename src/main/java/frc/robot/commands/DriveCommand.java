@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,7 +35,7 @@ public class DriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrainSub.move(drivController.getLeftY(), drivController.getRightY());
+    driveTrainSub.move(drivController.getLeftY() * DriveTrainConstants.speedMultiplier, drivController.getRightY() * DriveTrainConstants.speedMultiplier);
   }
 
   // Called once the command ends or is interrupted.
