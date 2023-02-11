@@ -24,6 +24,16 @@ public final class Constants {
     public static final double TARGET_MAX_HEIGHT = 10.0;
   }
 
+  public static class ArmConstants {
+    public static final int ArmRaiserMotorId = 1;
+    public static final int ArmExtendMotorId = 2;
+
+    public static final int UpperLimitSwitchPort = 1;
+    public static final int LowwerLimitSwitchPort = 2;
+    public static final int ExtentionLimitSwitch = 3;
+    public static final int RetractionLimitSwitch = 4;
+  }
+
   public static double inchesToMeters(double inches) {
     return 39.37 * inches;
   }

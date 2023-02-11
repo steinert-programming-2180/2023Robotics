@@ -7,30 +7,35 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax m_armRaiserMotor; 
   private CANSparkMax m_armExtenderMotor;
-  private static final int deviceIDOne = 1; 
-  private static final int deviceIDTwo = 2;
   private DigitalInput extentionLimitSwitch;
   private DigitalInput retractionLimitSwitch;
   private DigitalInput raisingLimitSwitch;
   private DigitalInput loweringLimitSwitch;
+  private RelativeEncoder elevationEncoder;
+  private RelativeEncoder extenctionEncoder;
 
 
   /** Creates a new ExampleSubsystem. */
   public Arm() {
-    raisingLimitSwitch = new DigitalInput(1);
-    loweringLimitSwitch = new DigitalInput(2);
-    extentionLimitSwitch = new DigitalInput(3);
-    retractionLimitSwitch = new DigitalInput(4);
-    m_armRaiserMotor = new CANSparkMax(deviceIDOne, MotorType.kBrushless);
-    m_armExtenderMotor = new CANSparkMax(deviceIDTwo, MotorType.kBrushless);
+    raisingLimitSwitch = new DigitalInput(ArmConstants.ArmRaiserMotorId);
+    loweringLimitSwitch = new DigitalInput(ArmConstants.LowerLimitSwitchPort);
+    extentionLimitSwitch = new DigitalInput(ArmConstants.ExtentionLimitSwitchPort);
+    retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchPort);
 
-
+    m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmExtendMotorId, MotorType.kBrushless);
+    m_armExtenderMotor = new CANSparkMax(ArmConstants.ArmExtendMotorId, MotorType.kBrushless);
+  
+    elevationEncoder = m_armRaiserMotor.getEncoder();
+    extenctionEncoder = m_armExtenderMotor.getEncoder();
   }
 
   /**
@@ -67,6 +72,14 @@ public class Arm extends SubsystemBase {
   }
 
 
+  public void resetEncoders() {
+    elevationEncoder.setPosition(0);
+    extenctionEncoder.setPosition(0);
+  }
+
+  public double getArmAngel() {
+    return ArmConstants.ArmAngle(elevationEncoder.getPosition());
+  }
 
 
   public void raiseArm() {
