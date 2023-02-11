@@ -16,4 +16,15 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class LimelightConstants {
+    public static final int LIME_ANGLE = 0;
+    public static final double LIME_HEIGHT = 1.0;
+  }
+  public static class FieldConstants {
+    public static final double TARGET_MAX_HEIGHT = 10.0;
+  }
+
+  public static double inchesToMeters(double inches) {
+    return 39.37 * inches;
+  }
 }
