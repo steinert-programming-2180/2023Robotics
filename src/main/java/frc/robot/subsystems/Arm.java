@@ -4,21 +4,33 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arm extends SubsystemBase {
-  private CANSparkMax m_armLifterMotor; 
+  private CANSparkMax m_armRaiserMotor; 
   private CANSparkMax m_armExtenderMotor;
   private static final int deviceIDOne = 1; 
   private static final int deviceIDTwo = 2;
+  private DigitalInput extentionLimitSwitch;
+  private DigitalInput retractionLimitSwitch;
+  private DigitalInput raisingLimitSwitch;
+  private DigitalInput loweringLimitSwitch;
+
 
   /** Creates a new ExampleSubsystem. */
   public Arm() {
-    m_armLifterMotor = new CANSparkMax(deviceIDOne, MotorType.kBrushless);
+    raisingLimitSwitch = new DigitalInput(1);
+    loweringLimitSwitch = new DigitalInput(2);
+    extentionLimitSwitch = new DigitalInput(3);
+    retractionLimitSwitch = new DigitalInput(4);
+    m_armRaiserMotor = new CANSparkMax(deviceIDOne, MotorType.kBrushless);
     m_armExtenderMotor = new CANSparkMax(deviceIDTwo, MotorType.kBrushless);
+
+
   }
 
   /**
@@ -35,30 +47,58 @@ public class Arm extends SubsystemBase {
         });
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+
+
+
+  public boolean isOverExtending() {
+    return extentionLimitSwitch.get();
   }
 
+  public boolean isOverRetracting() {
+    return retractionLimitSwitch.get();
+  }
+
+  public boolean isOverRaising() {
+    return raisingLimitSwitch.get();
+  }
+
+  public boolean isOverLowering() {
+    return loweringLimitSwitch.get();
+  }
+
+
+
+
   public void raiseArm() {
-    m_armLifterMotor.set(1);
+    if (isOverRaising()) {
+      m_armRaiserMotor.set(0);
+    } else {
+      m_armRaiserMotor.set(1);
+    }
   }
 
   public void lowerArm() {
-    m_armLifterMotor.set(-1);
+    if (isOverLowering()) {
+      m_armRaiserMotor.set(0);
+    } else {
+      m_armRaiserMotor.set(-1);
+    }
   }
 
   public void extendArm() {
-    m_armExtenderMotor.set(1);
+    if (isOverExtending()) {
+      m_armExtenderMotor.set(0);
+    } else {
+      m_armExtenderMotor.set(1);
+    } 
   }
 
   public void retractArm() {
-    m_armExtenderMotor.set(-1);
+    if (isOverRetracting()) {
+      m_armExtenderMotor.set(0);
+    } else {
+      m_armExtenderMotor.set(-1);
+    }
   }
 
   @Override
