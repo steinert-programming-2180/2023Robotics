@@ -22,8 +22,11 @@ public class DriveTrain extends SubsystemBase {
   CANSparkMax L1, L2, R1, R2, R3, L3;
   DifferentialDrive difDrive;
 
-  MotorControllerGroup LeftMotors;
-  MotorControllerGroup RightMotors;
+  CANSparkMax[] leftMotors;
+  CANSparkMax[] rightMotors;
+
+  MotorControllerGroup leftMotorGroup;
+  MotorControllerGroup rightMotorGroup;
   
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
@@ -32,19 +35,12 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDriveOdometry odometry;
 
   public DriveTrain() {
-    L1 = new CANSparkMax(DriveTrainConstants.leftMotorIds[0], MotorType.kBrushless);
-    L2 = new CANSparkMax(DriveTrainConstants.leftMotorIds[1], MotorType.kBrushless);
-    L3 = new CANSparkMax(DriveTrainConstants.leftMotorIds[2], MotorType.kBrushless);
 
-    LeftMotors = new MotorControllerGroup(L1, L2, L3);
+    setUpMotots();
+    leftMotorGroup = new MotorControllerGroup(leftMotors);
+    rightMotorGroup = new MotorControllerGroup(rightMotors);
 
-    R1 = new CANSparkMax(DriveTrainConstants.rightMotorIds[0], MotorType.kBrushless);
-    R2 = new CANSparkMax(DriveTrainConstants.rightMotorIds[1], MotorType.kBrushless);
-    R3 = new CANSparkMax(DriveTrainConstants.rightMotorIds[2], MotorType.kBrushless);
-
-    RightMotors = new MotorControllerGroup(R1, R2, R3);
-
-    difDrive = new DifferentialDrive(LeftMotors, RightMotors);
+    difDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
     navx = new AHRS(Port.kMXP);
         leftEncoder = L1.getEncoder();
@@ -64,7 +60,27 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose){
-    odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition() ,pose);
+    odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
+  }
+
+  private void setUpMotots() {
+    int amountOfLeftMotors = DriveTrainConstants.leftMotorIds.length;
+    int amountOfRightMotors = DriveTrainConstants.rightMotorIds.length;
+
+    leftMotors = new CANSparkMax[amountOfLeftMotors];
+    rightMotors = new CANSparkMax[amountOfRightMotors];
+
+    // Make Left Sparks from the ports
+    for (int i = 0; i < amountOfLeftMotors; i++){
+        leftMotors[i] = new CANSparkMax(DriveTrainConstants.leftMotorIds[i], MotorType.kBrushless);
+        leftMotors[i].setInverted(false);
+    }
+
+    // Make Right Sparks from the ports
+    for (int i = 0; i < amountOfRightMotors; i++){
+        rightMotors[i] = new CANSparkMax(DriveTrainConstants.rightMotorIds[i], MotorType.kBrushless);
+        rightMotors[i].setInverted(true);
+    }
   }
 
   public CommandBase exampleMethodCommand() {
