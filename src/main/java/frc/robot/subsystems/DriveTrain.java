@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;;
 
 public class DriveTrain extends SubsystemBase {
-  CANSparkMax L1, L2, R1, R2, R3, L3;
   DifferentialDrive difDrive;
 
   CANSparkMax[] leftMotors;
@@ -43,8 +42,8 @@ public class DriveTrain extends SubsystemBase {
     difDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
     navx = new AHRS(Port.kMXP);
-        leftEncoder = L1.getEncoder();
-        rightEncoder = R1.getEncoder();
+        leftEncoder = leftMotors[0].getEncoder();
+        rightEncoder = rightMotors[0].getEncoder();
         // odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
     }
     
