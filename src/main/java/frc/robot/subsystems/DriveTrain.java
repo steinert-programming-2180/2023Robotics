@@ -42,12 +42,12 @@ public class DriveTrain extends SubsystemBase {
     difDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
     navx = new AHRS(Port.kMXP);
-        leftEncoder = leftMotors[0].getEncoder();
-        rightEncoder = rightMotors[0].getEncoder();
-        // odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-    }
-    
-    public void move(Double LeftSpeed, Double RightSpeed) {
+    leftEncoder = leftMotors[0].getEncoder();
+    rightEncoder = rightMotors[0].getEncoder();
+    odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+  }
+  
+  public void move(Double LeftSpeed, Double RightSpeed) {
     difDrive.tankDrive(LeftSpeed, RightSpeed);
   }
   

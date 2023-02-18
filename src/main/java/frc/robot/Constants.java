@@ -15,15 +15,13 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int DriverControllerPort = 0;
-
     public static final int OperatorControllerPort = 1;
-    // public static final int 
   }
 
   public static class DriveTrainConstants {
-    public static final int[] leftMotorIds = {1,2,3};
-    public static final int[] rightMotorIds = {4,5,6};
+    public static final int[] leftMotorIds = {3,4};
+    public static final int[] rightMotorIds = {1,2};
   
-    public static final double speedMultiplier = .5;
+    public static final double speedMultiplier = -.5;
   }
 }

@@ -35,7 +35,9 @@ public class DriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrainSub.move(drivController.getLeftY() * DriveTrainConstants.speedMultiplier, drivController.getRightY() * DriveTrainConstants.speedMultiplier);
+    double leftSpeed = drivController.getLeftY() * DriveTrainConstants.speedMultiplier;
+    double rightSpeed = drivController.getRawAxis(3) * DriveTrainConstants.speedMultiplier;
+    driveTrainSub.move(leftSpeed, rightSpeed);
   }
 
   // Called once the command ends or is interrupted.
