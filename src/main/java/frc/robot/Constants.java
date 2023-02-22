@@ -17,8 +17,34 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class ArmConstants {
+    public static final int ArmRaiserMotorID = 1;
+    public static final int ArmExtendMotorID = 2;
+
+    public static final int UpperLimitSwitchID = 1;
+    public static final int LowwerLimitSwitchID = 2;
+    public static final int ExtensionLimitSwitchID = 3;
+    public static final int RetractionLimitSwitchID = 4;
+
+    public static final double armLiftingSpeed = 0.5; 
+    public static final double armExtensionSpeed = 0.5; 
+  }
+
   public static class IntakeConstants{
     public static final int intakeMotorID = 0;
     public static final double intakeSpeed = 0.5;
+  }
+
+  public static class LimelightConstants {
+    public static final int LIME_ANGLE = 0;
+    public static final double LIME_HEIGHT = 1.0;
+  }
+
+  public static class FieldConstants {
+    public static final double TARGET_MAX_HEIGHT = 10.0;
+  }
+
+  public static double inchesToMeters(double inches) {
+    return 39.37 * inches;
   }
 }
