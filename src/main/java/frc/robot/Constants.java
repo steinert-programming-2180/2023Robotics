@@ -25,13 +25,13 @@ public final class Constants {
   }
 
   public static class ArmConstants {
-    public static final int ArmRaiserMotorId = 1;
-    public static final int ArmExtendMotorId = 2;
+    public static final int ArmRaiserMotorID = 1;
+    public static final int ArmExtendMotorID = 2;
 
-    public static final int UpperLimitSwitchPort = 1;
-    public static final int LowwerLimitSwitchPort = 2;
-    public static final int ExtentionLimitSwitch = 3;
-    public static final int RetractionLimitSwitch = 4;
+    public static final int UpperLimitSwitchID = 1;
+    public static final int LowwerLimitSwitchID = 2;
+    public static final int ExtensionLimitSwitchID = 3;
+    public static final int RetractionLimitSwitchID = 4;
   }
 
   public static double inchesToMeters(double inches) {
