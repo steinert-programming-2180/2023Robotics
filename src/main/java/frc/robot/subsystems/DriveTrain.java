@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -26,6 +27,8 @@ public class DriveTrain extends SubsystemBase {
 
   MotorControllerGroup leftMotorGroup;
   MotorControllerGroup rightMotorGroup;
+
+  Servo brakeServo;
   
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
@@ -34,8 +37,9 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDriveOdometry odometry;
 
   public DriveTrain() {
+    brakeServo = new Servo(DriveTrainConstants.servoID);
 
-    setUpMotots();
+    setupMotors();
     leftMotorGroup = new MotorControllerGroup(leftMotors);
     rightMotorGroup = new MotorControllerGroup(rightMotors);
 
@@ -47,10 +51,29 @@ public class DriveTrain extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
   }
   
-  public void move(Double LeftSpeed, Double RightSpeed) {
-    difDrive.tankDrive(LeftSpeed, RightSpeed);
+  public void move(double leftSpeed, double rightSpeed) {
+    difDrive.tankDrive(leftSpeed, rightSpeed, true);
+  }
+
+  public void resetSpeedLimit(){ difDrive.setMaxOutput(1); }
+  public void stopMoving(){ difDrive.setMaxOutput(0); }
+
+  // Brakes
+  public void activateBrakes(){
+    stopMoving();
+    brakeServo.set(1);
+  }
+
+  public void deactivateBrakes(){
+    resetSpeedLimit();
+    brakeServo.set(0);
+  }
+
+  public boolean isInBrakeMode() {
+    return brakeServo.get() == 1;
   }
   
+  // Sensors + Odometry
   public void resetSensors(){
     navx.reset();
     leftEncoder.setPosition(0);
@@ -62,7 +85,7 @@ public class DriveTrain extends SubsystemBase {
     odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
   }
 
-  private void setUpMotots() {
+  private void setupMotors() {
     int amountOfLeftMotors = DriveTrainConstants.leftMotorIds.length;
     int amountOfRightMotors = DriveTrainConstants.rightMotorIds.length;
 
@@ -82,28 +105,8 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
-  public CommandBase exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
-  
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
-
   @Override
   public void periodic() {
-
   }
 
   @Override
