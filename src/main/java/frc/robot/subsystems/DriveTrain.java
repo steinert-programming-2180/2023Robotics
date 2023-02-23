@@ -37,7 +37,7 @@ public class DriveTrain extends SubsystemBase {
   DifferentialDriveOdometry odometry;
 
   public DriveTrain() {
-    brakeServo = new Servo(DriveTrainConstants.servoID);
+    // brakeServo = new Servo(DriveTrainConstants.servoID);
 
     setupMotors();
     leftMotorGroup = new MotorControllerGroup(leftMotors);
@@ -49,13 +49,21 @@ public class DriveTrain extends SubsystemBase {
     leftEncoder = leftMotors[0].getEncoder();
     rightEncoder = rightMotors[0].getEncoder();
     odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+
+    // TODO: cleaner way to handle limits
+    setSpeedLimit(0.5);
   }
   
   public void move(double leftSpeed, double rightSpeed) {
     difDrive.tankDrive(leftSpeed, rightSpeed, true);
   }
 
+  public void arcadeMove(double leftSpeed, double angleSpeed){
+    difDrive.arcadeDrive(leftSpeed, angleSpeed);
+  }
+
   public void resetSpeedLimit(){ difDrive.setMaxOutput(1); }
+  public void setSpeedLimit(double limit){ difDrive.setMaxOutput(limit); }
   public void stopMoving(){ difDrive.setMaxOutput(0); }
 
   // Brakes
@@ -95,13 +103,13 @@ public class DriveTrain extends SubsystemBase {
     // Make Left Sparks from the ports
     for (int i = 0; i < amountOfLeftMotors; i++){
         leftMotors[i] = new CANSparkMax(DriveTrainConstants.leftMotorIds[i], MotorType.kBrushless);
-        leftMotors[i].setInverted(false);
+        leftMotors[i].setInverted(true);
     }
 
     // Make Right Sparks from the ports
     for (int i = 0; i < amountOfRightMotors; i++){
         rightMotors[i] = new CANSparkMax(DriveTrainConstants.rightMotorIds[i], MotorType.kBrushless);
-        rightMotors[i].setInverted(true);
+        rightMotors[i].setInverted(false);
     }
   }
 

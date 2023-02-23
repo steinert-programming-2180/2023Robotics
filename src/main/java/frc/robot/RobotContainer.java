@@ -31,10 +31,11 @@ public class RobotContainer {
   CommandJoystick rightJoystick;
   CommandXboxController operatorController;
   
-  private DriveTrain drivetrain = new DriveTrain();
+ DriveTrain drivetrain;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    drivetrain = new DriveTrain();
     setupIO();
     setupDriveTrainCommand();
     configureBindings();
@@ -47,12 +48,14 @@ public class RobotContainer {
   }
 
   private void setupDriveTrainCommand(){
-    new RunCommand(
-      () -> drivetrain.move(
+    RunCommand driveCommand = new RunCommand(
+      () -> drivetrain.arcadeMove(
               leftJoystick.getY(), 
               rightJoystick.getY()
             )
       , drivetrain);
+
+    drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
