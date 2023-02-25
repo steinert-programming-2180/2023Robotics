@@ -35,6 +35,8 @@ public final class Constants {
     public static final double kS = 0.29695;
     public static final double kV = 0.10775;
     public static final double kA = 0.0089831;
+
+    public static final double gearRatio = 15.57/1.0;
   }
 
   public static class ArmConstants {
