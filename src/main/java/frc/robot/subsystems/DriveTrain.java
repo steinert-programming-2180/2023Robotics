@@ -9,8 +9,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -34,7 +40,17 @@ public class DriveTrain extends SubsystemBase {
   RelativeEncoder rightEncoder;
 
   AHRS navx;
-  DifferentialDriveOdometry odometry;
+
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
+    DriveTrainConstants.KS, 
+    DriveTrainConstants.KV,
+    DriveTrainConstants.KA
+  );
+
+  DifferentialDriveOdometry odometry; 
+  DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
+    Units.inchesToMeters(6)
+  );
 
   public DriveTrain() {
     // brakeServo = new Servo(DriveTrainConstants.servoID);
@@ -48,7 +64,12 @@ public class DriveTrain extends SubsystemBase {
     navx = new AHRS(Port.kMXP);
     leftEncoder = leftMotors[0].getEncoder();
     rightEncoder = rightMotors[0].getEncoder();
-    odometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    
+    odometry = new DifferentialDriveOdometry(
+      navx.getRotation2d(),
+      leftEncoder.getPosition(),
+      rightEncoder.getPosition()
+    );
 
     // TODO: cleaner way to handle limits
     setSpeedLimit(0.5);
@@ -89,6 +110,27 @@ public class DriveTrain extends SubsystemBase {
     resetOdometry(new Pose2d());
   }
 
+  public SimpleMotorFeedforward getFeedForward(){ return feedforward; }
+  public DifferentialDriveKinematics getKinematics(){ return kinematics; }
+  public PIDController getPID(){
+    return new PIDController(
+      DriveTrainConstants.P, 
+      DriveTrainConstants.I, 
+      DriveTrainConstants.D
+    );
+  }
+  public Pose2d getPose(){
+    return odometry.getPoseMeters();
+  }
+  public DifferentialDriveWheelSpeeds getDifferentialDriveWheelSpeeds(){
+    return kinematics.toWheelSpeeds(new ChassisSpeeds(1.0, 1.0, 0.0));
+  }
+  public void tankDriveVolts(double leftVolts, double rightVolts){
+    leftMotorGroup.setVoltage(leftVolts);
+    rightMotorGroup.setVoltage(rightVolts);
+    difDrive.feed();
+  }
+
   public void resetOdometry(Pose2d pose){
     odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
   }
@@ -115,6 +157,12 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    difDrive.feed();
+    odometry.update(
+      navx.getRotation2d(), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition()
+    );
   }
 
   @Override

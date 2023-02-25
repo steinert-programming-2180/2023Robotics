@@ -9,9 +9,19 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import java.util.List;
+
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -88,7 +98,37 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    double maxVelocityMetersPerSecond = 1;
+    double maxAccelerationMetersPerSecondSq = 1;
+
+    RamseteController ramController = new RamseteController();
+
+    TrajectoryConfig config = new TrajectoryConfig(
+      maxVelocityMetersPerSecond, 
+      maxAccelerationMetersPerSecondSq
+    );
+
+    Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+      List.of(), 
+      new Pose2d(1, 0, Rotation2d.fromDegrees(0)), 
+      config
+    );
+
+    RamseteCommand ramCommand = new RamseteCommand(
+      testTrajectory, 
+      drivetrain::getPose, 
+      ramController, 
+      drivetrain.getFeedForward(), 
+      drivetrain.getKinematics(), 
+      drivetrain::getDifferentialDriveWheelSpeeds, 
+      drivetrain.getPID(), 
+      drivetrain.getPID(), 
+      drivetrain::tankDriveVolts, 
+      drivetrain
+    );
+    return ramCommand;
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    // return Autos.exampleAuto(m_exampleSubsystem);
   }
 }

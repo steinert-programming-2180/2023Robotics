@@ -24,7 +24,16 @@ public final class Constants {
 
     public static final int[] leftMotorIds = {3,4};
     public static final int[] rightMotorIds = {1,2};
-  
+
+    public static final double P = 2.2477;
+    public static final double I = 0;  
+    public static final double D = 0.19153;  
+
+    public static final double KS = 0.29695;  
+    public static final double KV = 0.10775;  
+    public static final double KA = 0.0089831;  
+
+
     public static final double speedMultiplier = -.5;
   }
 }
