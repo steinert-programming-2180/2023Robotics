@@ -22,7 +22,7 @@ public final class Constants {
     public static final int ArmExtendMotorID = 2;
 
     public static final int UpperLimitSwitchID = 1;
-    public static final int LowwerLimitSwitchID = 2;
+    public static final int LowerLimitSwitchID = 2;
     public static final int ExtensionLimitSwitchID = 3;
     public static final int RetractionLimitSwitchID = 4;
 

@@ -30,7 +30,7 @@ public class Arm extends SubsystemBase {
   public Arm() {
     // TODO: make mechanical mount these on there
     raisingLimitSwitch = new DigitalInput(ArmConstants.UpperLimitSwitchID);
-    loweringLimitSwitch = new DigitalInput(ArmConstants.LowwerLimitSwitchID);
+    loweringLimitSwitch = new DigitalInput(ArmConstants.LowerLimitSwitchID);
     extensionLimitSwitch = new DigitalInput(ArmConstants.ExtensionLimitSwitchID);
     retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
 
