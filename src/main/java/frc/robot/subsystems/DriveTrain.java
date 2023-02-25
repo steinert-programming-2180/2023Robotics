@@ -44,6 +44,8 @@ public class DriveTrain extends SubsystemBase {
 
   AHRS navx;
 
+  boolean syncWheels = false;
+
   SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
     DriveTrainConstants.kS, 
     DriveTrainConstants.kV,
@@ -80,6 +82,14 @@ public class DriveTrain extends SubsystemBase {
 
   public float getYawRotation(){
     return navx.getYaw();
+  }
+
+  public void setSyncWheels(boolean syncWheels) {
+    this.syncWheels = syncWheels;
+  }
+
+  public boolean areWheelsSync() {
+    return this.syncWheels;
   }
 
   /** Instantiate NavX and Left/Right Encoders */

@@ -60,8 +60,8 @@ public class RobotContainer {
   private void setupDriveTrainCommand(){
     RunCommand driveCommand = new RunCommand(
       () -> drivetrain.move(
-              leftJoystick.getY(), 
-              rightJoystick.getY()
+              Math.abs(leftJoystick.getY()) <= .1 ? 0 : leftJoystick.getY(),
+              Math.abs(rightJoystick.getY()) <= .1 ? 0 : rightJoystick.getY()
             )
       , drivetrain);
 
