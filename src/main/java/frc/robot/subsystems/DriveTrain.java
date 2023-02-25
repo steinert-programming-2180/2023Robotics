@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;;
@@ -56,9 +58,10 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     // leftBrakeServo = new Servo(DriveTrainConstants.leftServoID);
     // rightBrakeServo = new Servo(DriveTrainConstants.rightServoID);
-    
+
     setupMotors();
     setupDriveTrainSensors();
+    setPositionConversion();
 
     leftMotorGroup = new MotorControllerGroup(leftMotors);
     rightMotorGroup = new MotorControllerGroup(rightMotors);
@@ -156,6 +159,10 @@ public class DriveTrain extends SubsystemBase {
   
   /** Set Motor Speeds by using Voltage instead of Percent */
   public void tankDriveVolts(double leftVolts, double rightVolts){
+    SmartDashboard.putNumber("Left Volts", leftVolts);
+    SmartDashboard.putNumber("Right Volts", leftVolts);
+    // System.out.println(leftVolts);
+
     leftMotorGroup.setVoltage(leftVolts);
     rightMotorGroup.setVoltage(rightVolts);
     difDrive.feed();
@@ -163,6 +170,20 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose){
     odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
+  }
+
+  public void setPositionConversion(){
+    double doubleMotorFactor = 2; // We multiply by 2 because there are 2 motors running on one side
+    double wheelCircumferenceMeters = Units.inchesToMeters(6)*Math.PI;
+    double minutesToSecondsFactor = 60;
+    double gearRatioConversion = 1.0/DriveTrainConstants.gearRatio;
+    double totalPositionConversionFactor = doubleMotorFactor * wheelCircumferenceMeters * gearRatioConversion;
+
+    leftEncoder.setPositionConversionFactor(totalPositionConversionFactor);
+    leftEncoder.setVelocityConversionFactor(totalPositionConversionFactor * minutesToSecondsFactor);
+
+    rightEncoder.setPositionConversionFactor(totalPositionConversionFactor);
+    rightEncoder.setVelocityConversionFactor(totalPositionConversionFactor * minutesToSecondsFactor);
   }
 
   /** Create Motor Arrays */
@@ -177,12 +198,16 @@ public class DriveTrain extends SubsystemBase {
     for (int i = 0; i < amountOfLeftMotors; i++){
         leftMotors[i] = new CANSparkMax(DriveTrainConstants.leftMotorIds[i], MotorType.kBrushless);
         leftMotors[i].setInverted(true);
+        // TODO: not actually use brake mode
+        leftMotors[i].setIdleMode(IdleMode.kBrake);
     }
 
     // Make Right Sparks from the ports
     for (int i = 0; i < amountOfRightMotors; i++){
         rightMotors[i] = new CANSparkMax(DriveTrainConstants.rightMotorIds[i], MotorType.kBrushless);
         rightMotors[i].setInverted(false);
+        rightMotors[i].setIdleMode(IdleMode.kBrake);
+
     }
   }
 
@@ -196,6 +221,8 @@ public class DriveTrain extends SubsystemBase {
       leftEncoder.getPosition(), 
       rightEncoder.getPosition()
     );
+
+    SmartDashboard.putNumber("Angle", getYawRotation());
   }
 
   @Override

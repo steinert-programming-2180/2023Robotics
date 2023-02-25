@@ -25,7 +25,7 @@ public class TurnToAngle extends PIDCommand{
             drivetrain
         );
 
-        getController().setTolerance(5);
+        getController().setTolerance(3);
     }
 
     @Override

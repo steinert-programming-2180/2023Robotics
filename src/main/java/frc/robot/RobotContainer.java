@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 
@@ -17,7 +18,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -85,14 +88,20 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.5, 1);
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new Rotation2d()),
       List.of(),
-      new Pose2d(0, 1, new Rotation2d()),
+      new Pose2d(1, 0, new Rotation2d()),
       trajectoryConfig
     );
-    return Autos.followTrajectoryCommand(drivetrain, trajectory);
+    return new SequentialCommandGroup(
+      Commands.runOnce(
+        () -> drivetrain.resetSensors(),
+        drivetrain
+      ),
+      new TurnToAngle(90, drivetrain)
+    );
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }
