@@ -47,4 +47,10 @@ public final class Constants {
   public static double inchesToMeters(double inches) {
     return 39.37 * inches;
   }
+
+  public static class BreackConstants {
+    public static int ServoId=1;
+    public static int servoOpenAngle=0;
+    public static int servoCloseAngle=90;
+  }
 }
