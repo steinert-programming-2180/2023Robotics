@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 
 public final class Autos {
-  double maxVelocityMetersPerSecond = 1;
-  double maxAccelerationMetersPerSecondSq = 1;
+  static double maxVelocityMetersPerSecond = 1;
+  static double maxAccelerationMetersPerSecondSq = 1;
 
-  TrajectoryConfig config = new TrajectoryConfig(
+  public static TrajectoryConfig config = new TrajectoryConfig(
     maxVelocityMetersPerSecond, 
     maxAccelerationMetersPerSecondSq
   );
@@ -27,7 +27,7 @@ public final class Autos {
   }
 
   /** Create Ramsete Command that Follows a Trajectory */ 
-  private RamseteCommand followTrajectoryCommand(DriveTrain drivetrain, Trajectory trajectory){
+  public static RamseteCommand followTrajectoryCommand(DriveTrain drivetrain, Trajectory trajectory){
     RamseteController ramseteController = new RamseteController();
 
     RamseteCommand ramseteCommand = new RamseteCommand(

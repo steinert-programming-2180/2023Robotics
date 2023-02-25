@@ -57,8 +57,8 @@ public class DriveTrain extends SubsystemBase {
     // leftBrakeServo = new Servo(DriveTrainConstants.leftServoID);
     // rightBrakeServo = new Servo(DriveTrainConstants.rightServoID);
     
-    setupDriveTrainSensors();
     setupMotors();
+    setupDriveTrainSensors();
 
     leftMotorGroup = new MotorControllerGroup(leftMotors);
     rightMotorGroup = new MotorControllerGroup(rightMotors);
