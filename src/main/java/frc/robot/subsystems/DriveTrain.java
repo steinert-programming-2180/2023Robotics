@@ -34,7 +34,8 @@ public class DriveTrain extends SubsystemBase {
   MotorControllerGroup leftMotorGroup;
   MotorControllerGroup rightMotorGroup;
 
-  Servo brakeServo;
+  Servo leftBrakeServo;
+  Servo rightBrakeServo;
   
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
@@ -42,29 +43,28 @@ public class DriveTrain extends SubsystemBase {
   AHRS navx;
 
   SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-    DriveTrainConstants.KS, 
-    DriveTrainConstants.KV,
-    DriveTrainConstants.KA
+    DriveTrainConstants.kS, 
+    DriveTrainConstants.kV,
+    DriveTrainConstants.kA
   );
 
   DifferentialDriveOdometry odometry; 
   DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(
-    Units.inchesToMeters(6)
+    Units.inchesToMeters(DriveTrainConstants.wheelWidthInches)
   );
 
   public DriveTrain() {
-    // brakeServo = new Servo(DriveTrainConstants.servoID);
-
+    // leftBrakeServo = new Servo(DriveTrainConstants.leftServoID);
+    // rightBrakeServo = new Servo(DriveTrainConstants.rightServoID);
+    
+    setupDriveTrainSensors();
     setupMotors();
+
     leftMotorGroup = new MotorControllerGroup(leftMotors);
     rightMotorGroup = new MotorControllerGroup(rightMotors);
 
     difDrive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
-
-    navx = new AHRS(Port.kMXP);
-    leftEncoder = leftMotors[0].getEncoder();
-    rightEncoder = rightMotors[0].getEncoder();
-    
+ 
     odometry = new DifferentialDriveOdometry(
       navx.getRotation2d(),
       leftEncoder.getPosition(),
@@ -74,34 +74,56 @@ public class DriveTrain extends SubsystemBase {
     // TODO: cleaner way to handle limits
     setSpeedLimit(0.5);
   }
+
+  public float getYawRotation(){
+    return navx.getYaw();
+  }
+
+  /** Instantiate NavX and Left/Right Encoders */
+  private void setupDriveTrainSensors(){
+    navx = new AHRS(Port.kMXP);
+    leftEncoder = leftMotors[0].getEncoder();
+    rightEncoder = rightMotors[0].getEncoder();
+  }
   
+  /** This function drives the robot using whatever method the driver is most comfortable with.
+   * This should NOT be used with anything other than user inputs.
+   */
   public void move(double leftSpeed, double rightSpeed) {
     difDrive.tankDrive(leftSpeed, rightSpeed, true);
   }
 
-  public void arcadeMove(double leftSpeed, double angleSpeed){
-    difDrive.arcadeDrive(leftSpeed, angleSpeed);
+  public void tankDrive(double leftSpeed, double rightSpeed){
+    difDrive.tankDrive(leftSpeed, rightSpeed);
+  }
+
+  public void arcadeDrive(double linearSpeed, double angleSpeed){
+    difDrive.arcadeDrive(linearSpeed, angleSpeed);
   }
 
   public void resetSpeedLimit(){ difDrive.setMaxOutput(1); }
   public void setSpeedLimit(double limit){ difDrive.setMaxOutput(limit); }
+
+  // TODO: watch out for this type of usage
   public void stopMoving(){ difDrive.setMaxOutput(0); }
 
   // Brakes
   public void activateBrakes(){
     stopMoving();
-    brakeServo.set(1);
+    leftBrakeServo.set(1);
+    //rightBrakeServo.set(1);
+  }
+
+  public boolean isInBrakeMode() {
+    return leftBrakeServo.get() == 1 || rightBrakeServo.get() == 1;
   }
 
   public void deactivateBrakes(){
     resetSpeedLimit();
-    brakeServo.set(0);
+    leftBrakeServo.set(0);
+    rightBrakeServo.set(0);
   }
 
-  public boolean isInBrakeMode() {
-    return brakeServo.get() == 1;
-  }
-  
   // Sensors + Odometry
   public void resetSensors(){
     navx.reset();
@@ -112,6 +134,7 @@ public class DriveTrain extends SubsystemBase {
 
   public SimpleMotorFeedforward getFeedForward(){ return feedforward; }
   public DifferentialDriveKinematics getKinematics(){ return kinematics; }
+
   public PIDController getPID(){
     return new PIDController(
       DriveTrainConstants.P, 
@@ -119,12 +142,19 @@ public class DriveTrain extends SubsystemBase {
       DriveTrainConstants.D
     );
   }
+
   public Pose2d getPose(){
     return odometry.getPoseMeters();
   }
+
+  /** Get Robot Speeds */
   public DifferentialDriveWheelSpeeds getDifferentialDriveWheelSpeeds(){
-    return kinematics.toWheelSpeeds(new ChassisSpeeds(1.0, 1.0, 0.0));
+    double leftMetersPerSecond = leftEncoder.getVelocity();
+    double rightMetersPerSecond = rightEncoder.getVelocity();
+    return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
   }
+  
+  /** Set Motor Speeds by using Voltage instead of Percent */
   public void tankDriveVolts(double leftVolts, double rightVolts){
     leftMotorGroup.setVoltage(leftVolts);
     rightMotorGroup.setVoltage(rightVolts);
@@ -135,6 +165,7 @@ public class DriveTrain extends SubsystemBase {
     odometry.resetPosition(navx.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
   }
 
+  /** Create Motor Arrays */
   private void setupMotors() {
     int amountOfLeftMotors = DriveTrainConstants.leftMotorIds.length;
     int amountOfRightMotors = DriveTrainConstants.rightMotorIds.length;
@@ -157,7 +188,9 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // this updates the MotorSafety class with motor info so we don't get errors
     difDrive.feed();
+
     odometry.update(
       navx.getRotation2d(), 
       leftEncoder.getPosition(), 

@@ -6,22 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,7 +29,7 @@ public class RobotContainer {
   CommandJoystick rightJoystick;
   CommandXboxController operatorController;
   
- DriveTrain drivetrain;
+  public DriveTrain drivetrain;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -51,15 +39,17 @@ public class RobotContainer {
     configureBindings();
   }
 
+  /** Instantiate Joysticks and Controllers */
   private void setupIO(){
     leftJoystick = new CommandJoystick(OperatorConstants.leftJoystickPort);
     rightJoystick = new CommandJoystick(OperatorConstants.rightJoystickPort);
     operatorController = new CommandXboxController(OperatorConstants.operatorControllerPort);
   }
 
+  /** Create Default Command so Joysticks ALWAYS control drivetrain */
   private void setupDriveTrainCommand(){
     RunCommand driveCommand = new RunCommand(
-      () -> drivetrain.arcadeMove(
+      () -> drivetrain.move(
               leftJoystick.getY(), 
               rightJoystick.getY()
             )
@@ -78,19 +68,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-        
+
   }
-
-  /* these were the comments placed in here that are now removed for cleanliness
-   * 
-   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-   */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -98,37 +77,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    double maxVelocityMetersPerSecond = 1;
-    double maxAccelerationMetersPerSecondSq = 1;
-
-    RamseteController ramController = new RamseteController();
-
-    TrajectoryConfig config = new TrajectoryConfig(
-      maxVelocityMetersPerSecond, 
-      maxAccelerationMetersPerSecondSq
-    );
-
-    Trajectory testTrajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-      List.of(), 
-      new Pose2d(1, 0, Rotation2d.fromDegrees(0)), 
-      config
-    );
-
-    RamseteCommand ramCommand = new RamseteCommand(
-      testTrajectory, 
-      drivetrain::getPose, 
-      ramController, 
-      drivetrain.getFeedForward(), 
-      drivetrain.getKinematics(), 
-      drivetrain::getDifferentialDriveWheelSpeeds, 
-      drivetrain.getPID(), 
-      drivetrain.getPID(), 
-      drivetrain::tankDriveVolts, 
-      drivetrain
-    );
-    return ramCommand;
     // An example command will be run in autonomous
-    // return Autos.exampleAuto(m_exampleSubsystem);
+    return Autos.exampleAuto(m_exampleSubsystem);
   }
 }
