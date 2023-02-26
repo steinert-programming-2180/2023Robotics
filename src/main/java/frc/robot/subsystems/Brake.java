@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BreackConstants;
 
-public class BreakSubsystem extends SubsystemBase {
+public class Brake extends SubsystemBase {
   Servo breakServo;
   
   /** Creates a new ExampleSubsystem. */
-  public BreakSubsystem() {
+  public Brake() {
     breakServo = new Servo(BreackConstants.ServoId);
   }
 

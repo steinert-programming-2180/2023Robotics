@@ -5,14 +5,22 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
+import frc.robot.commands.BrakeOff;
+import frc.robot.commands.BrakeOn;
+import frc.robot.commands.ExtendArm;
+import frc.robot.commands.IntakeOn;
+import frc.robot.commands.IntakeReverse;
+import frc.robot.commands.LowerArm;
+import frc.robot.commands.RaiseArm;
+import frc.robot.commands.RetractArm;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Brake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -40,6 +47,19 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm();
+  private final Intake intake = new Intake();
+  private final Brake brake = new Brake();
+
+  private final RaiseArm raiseArm = new RaiseArm(arm);
+  private final LowerArm lowerArm = new LowerArm(arm);
+  private final ExtendArm extendArm = new ExtendArm(arm);
+  private final RetractArm retractArm = new RetractArm(arm);
+  
+  private final IntakeOn intakeOn = new IntakeOn(intake);
+  private final IntakeReverse intakeReverse = new IntakeReverse(intake);
+
+  private final BrakeOn brakeOn = new BrakeOn(brake);
+  private final BrakeOff brakeOff = new BrakeOff(brake);
 
   Joystick leftJoystick;
   Joystick rightJoystick;
@@ -89,13 +109,23 @@ public class RobotContainer {
 
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
     
+    Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
-    Trigger XboxLeftPad = new Trigger(() -> operatorController.getPOV() == 270);
 
     JoystickButton XboxLeftTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kLeftTrigger.value);
     JoystickButton XboxRightTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kRightTrigger.value);
     
-    
+    XboxButtonB.whileTrue(intakeOn);
+    XboxButtonA.whileTrue(intakeReverse);
+  
+    XboxUpPad.whileTrue(extendArm);
+    XboxDownPad.whileTrue(retractArm);
+
+    XboxRightTrigger.whileTrue(raiseArm);
+    XboxLeftTrigger.whileTrue(lowerArm);
+
+    XboxRightBumper.whileFalse(brakeOff);
+    XboxRightBumper.whileTrue(brakeOn);
   }
 
   /**
