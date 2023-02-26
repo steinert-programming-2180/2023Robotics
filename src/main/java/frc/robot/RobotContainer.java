@@ -7,22 +7,27 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -34,10 +39,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Arm arm = new Arm();
 
-  CommandJoystick leftJoystick;
-  CommandJoystick rightJoystick;
-  CommandXboxController operatorController;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
+  XboxController operatorController;
   
   public DriveTrain drivetrain;
 
@@ -51,9 +57,9 @@ public class RobotContainer {
 
   /** Instantiate Joysticks and Controllers */
   private void setupIO(){
-    leftJoystick = new CommandJoystick(OperatorConstants.leftJoystickPort);
-    rightJoystick = new CommandJoystick(OperatorConstants.rightJoystickPort);
-    operatorController = new CommandXboxController(OperatorConstants.operatorControllerPort);
+    leftJoystick = new Joystick(OperatorConstants.leftJoystickPort);
+    rightJoystick = new Joystick(OperatorConstants.rightJoystickPort);
+    operatorController = new XboxController(OperatorConstants.operatorControllerPort);
   }
 
   /** Create Default Command so Joysticks ALWAYS control drivetrain */
@@ -78,7 +84,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
+    JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
 
+    JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
+    
+    Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
+    Trigger XboxLeftPad = new Trigger(() -> operatorController.getPOV() == 270);
+
+    JoystickButton XboxLeftTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kLeftTrigger.value);
+    JoystickButton XboxRightTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kRightTrigger.value);
   }
 
   /**
