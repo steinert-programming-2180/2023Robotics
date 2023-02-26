@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -14,16 +17,16 @@ public class Limelight extends SubsystemBase {
 
     // Gets our Limelight NetworkTable, api located here:
     // https://docs.limelightvision.io/en/latest/networktables_api.html
-    private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    private NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    
+    private NetworkTableEntry ta = table.getEntry("ta");
+    private NetworkTableEntry tv = table.getEntry("tv");
 
-    private NetworkTableEntry tx = limelight.getEntry("tx");
-    private NetworkTableEntry ty = limelight.getEntry("ty");
-    private NetworkTableEntry ta = limelight.getEntry("ta");
-    private NetworkTableEntry tv = limelight.getEntry("tv");
-
-    private NetworkTableEntry camMode = limelight.getEntry("camMode");
-    private NetworkTableEntry ledMode = limelight.getEntry("ledMode");
-    private NetworkTableEntry pipeline = limelight.getEntry("pipeline");
+    private NetworkTableEntry camMode = table.getEntry("camMode");
+    private NetworkTableEntry ledMode = table.getEntry("ledMode");
+    private NetworkTableEntry pipeline = table.getEntry("israel");
 
     /**
      * Limelight class for command usage, non-static usage pretty much entirely
@@ -35,6 +38,9 @@ public class Limelight extends SubsystemBase {
     @Override
     public void periodic() {
         putItems();
+        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
+        System.out.println(targetOffsetAngle_Vertical);
+        
     }
 
     /**
@@ -142,7 +148,7 @@ public class Limelight extends SubsystemBase {
         SmartDashboard.putNumber("LimelightArea", area);
 
         // Gets the horizontal distance from the target
-        double dist = getHorizontalDistance();
+         System.out.println(getHorizontalDistance());
 
         // If this distance is positive, i.e. didn't trigger a failsafe, put it to
         // SmartDashboard
@@ -219,7 +225,7 @@ public class Limelight extends SubsystemBase {
      *         {@link https://docs.limelightvision.io/en/latest/networktables_api.html}
      */
     public NetworkTable getLimelightTable() {
-        return limelight;
+        return table;
     }
 
     /**
@@ -236,4 +242,5 @@ public class Limelight extends SubsystemBase {
     public void swapCamera() {
         setCameraMode(1 - getCameraMode());
     }
+    
 }
