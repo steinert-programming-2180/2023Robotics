@@ -29,15 +29,14 @@ public class Intake extends SubsystemBase {
           /* one-time action goes here */
         });
   }
-
-  public void intake() {
-    clawMotor.set(IntakeConstants.intakeSpeed);
-  }
-
-  public void outtake() {
+  public void IntakeRevese() {
     clawMotor.set(-IntakeConstants.intakeSpeed);
   }
-
+  
+  public void intakeOn() {
+    clawMotor.set(IntakeConstants.intakeSpeed);
+  }
+  
   // TODO: how are we sensing if the claw has grabbed something? Encoders? Test out encoders.
   // public boolean hasFieldElement(){
   //   return true;
@@ -51,6 +50,4 @@ public class Intake extends SubsystemBase {
   public void simulationPeriodic() {
   }
 
-  public void intakeOn() {
-  }
 }

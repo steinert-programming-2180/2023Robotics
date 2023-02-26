@@ -94,6 +94,8 @@ public class RobotContainer {
 
     JoystickButton XboxLeftTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kLeftTrigger.value);
     JoystickButton XboxRightTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kRightTrigger.value);
+    
+    
   }
 
   /**
