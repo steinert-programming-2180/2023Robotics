@@ -36,6 +36,10 @@ public class Intake extends SubsystemBase {
   public void intakeOn() {
     clawMotor.set(IntakeConstants.intakeSpeed);
   }
+
+  public void intakeStop() {
+    clawMotor.set(0);
+  }
   
   // TODO: how are we sensing if the claw has grabbed something? Encoders? Test out encoders.
   // public boolean hasFieldElement(){
