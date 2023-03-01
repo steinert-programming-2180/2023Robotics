@@ -46,10 +46,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+
+  // Subsystems
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
   private final Brake brake = new Brake();
 
+  // Commands
   private final RaiseArm raiseArm = new RaiseArm(arm);
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
@@ -112,20 +115,19 @@ public class RobotContainer {
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
 
-    JoystickButton XboxLeftTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kLeftTrigger.value);
-    JoystickButton XboxRightTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kRightTrigger.value);
+    JoystickButton XboxLeftTrigger = new JoystickButton(operatorController, XboxController.Axis.kLeftTrigger.value);
+    JoystickButton XboxRightTrigger = new JoystickButton(operatorController, XboxController.Axis.kRightTrigger.value);
     
-    XboxButtonB.whileTrue(intakeOn);
-    XboxButtonA.whileTrue(intakeReverse);
+    XboxButtonA.whileTrue(intakeOn);
+    XboxButtonB.whileTrue(intakeReverse);
   
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
 
-    XboxRightTrigger.whileTrue(raiseArm);
     XboxLeftTrigger.whileTrue(lowerArm);
+    XboxRightTrigger.whileTrue(raiseArm);
 
-    XboxRightBumper.whileFalse(brakeOff);
-    XboxRightBumper.whileTrue(brakeOn);
+    XboxRightBumper.whileFalse(brakeOff).whileTrue(brakeOn);
   }
 
   /**

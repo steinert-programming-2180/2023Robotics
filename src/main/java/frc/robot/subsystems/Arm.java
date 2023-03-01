@@ -11,6 +11,7 @@ import frc.robot.Constants.ArmConstants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arm extends SubsystemBase {
@@ -29,13 +30,16 @@ public class Arm extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public Arm() {
     // TODO: make mechanical mount these on there
-    raisingLimitSwitch = new DigitalInput(ArmConstants.UpperLimitSwitchID);
-    loweringLimitSwitch = new DigitalInput(ArmConstants.LowerLimitSwitchID);
-    extensionLimitSwitch = new DigitalInput(ArmConstants.ExtensionLimitSwitchID);
-    retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
+    // raisingLimitSwitch = new DigitalInput(ArmConstants.UpperLimitSwitchID);
+    // loweringLimitSwitch = new DigitalInput(ArmConstants.LowerLimitSwitchID);
+    // extensionLimitSwitch = new DigitalInput(ArmConstants.ExtensionLimitSwitchID);
+    // retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
 
-    m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmExtendMotorID, MotorType.kBrushless);
+    m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmRaiserMotorID, MotorType.kBrushless);
     m_armExtenderMotor = new CANSparkMax(ArmConstants.ArmExtendMotorID, MotorType.kBrushless);
+
+    m_armRaiserMotor.setIdleMode(IdleMode.kCoast);
+    m_armExtenderMotor.setIdleMode(IdleMode.kBrake);
   
     elevationEncoder = m_armRaiserMotor.getEncoder();
     extensionEncoder = m_armExtenderMotor.getEncoder();
@@ -56,19 +60,23 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isOverExtending() {
-    return extensionLimitSwitch.get();
+    // return extensionLimitSwitch.get();
+    return false;
   }
 
   public boolean isOverRetracting() {
-    return retractionLimitSwitch.get();
+    // return retractionLimitSwitch.get();
+    return false;
   }
 
   public boolean isOverRaising() {
-    return raisingLimitSwitch.get();
+    // return raisingLimitSwitch.get();
+    return false;
   }
 
   public boolean isOverLowering() {
-    return loweringLimitSwitch.get();
+    // return loweringLimitSwitch.get();
+    return false;
   }
 
   public void resetEncoders() {
@@ -83,36 +91,29 @@ public class Arm extends SubsystemBase {
 
 
   public void raiseArm() {
-    if (isOverRaising()) {
-      m_armRaiserMotor.set(0);
-    } else {
-      m_armRaiserMotor.set(ArmConstants.armLiftingSpeed);
-    }
+    double armSpeed = isOverRaising() ? 0:ArmConstants.armLiftingSpeed;
+    m_armRaiserMotor.set(-armSpeed);
   }
 
   public void lowerArm() {
-    if (isOverLowering()) {
-      m_armRaiserMotor.set(0);
-    } else {
-      m_armRaiserMotor.set(-ArmConstants.armLiftingSpeed);
-    }
+    double armSpeed = isOverLowering() ? 0:ArmConstants.armLiftingSpeed;
+    m_armRaiserMotor.set(armSpeed);
   }
 
   public void extendArm() {
-    if (isOverExtending()) {
-      m_armExtenderMotor.set(0);
-    } else {
-      m_armExtenderMotor.set(ArmConstants.armExtensionSpeed);
-    } 
+    double speed = isOverExtending() ? 0:ArmConstants.armExtensionSpeed;
+    m_armExtenderMotor.set(-speed);
   }
 
   public void retractArm() {
-    if (isOverRetracting()) {
-      m_armExtenderMotor.set(0);
-    } else {
-      m_armExtenderMotor.set(-ArmConstants.armExtensionSpeed);
-    }
+    double speed = isOverRetracting() ? 0:ArmConstants.armExtensionSpeed;
+    m_armExtenderMotor.set(speed);
   }
+
+  public void stopExtension(){m_armExtenderMotor.set(0);}
+  public void stopRetraction(){m_armExtenderMotor.set(0);}
+  public void stopRaising(){m_armRaiserMotor.set(0);}
+  public void stopLowering(){m_armRaiserMotor.set(0);}
 
   @Override
    
