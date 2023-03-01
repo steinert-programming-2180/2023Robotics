@@ -29,6 +29,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -46,17 +47,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  // Subsystems
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
   private final Brake brake = new Brake();
 
-  // Commands
-  private final RaiseArm raiseArm = new RaiseArm(arm);
-  private final LowerArm lowerArm = new LowerArm(arm);
-  private final ExtendArm extendArm = new ExtendArm(arm);
-  private final RetractArm retractArm = new RetractArm(arm);
+  //private final RaiseArm raiseArm = new RaiseArm(0, arm);
+  private final LowerArm lowerArm = new LowerArm(0, arm);
+ //private final ExtendArm extendArm = new ExtendArm(0, arm);
+  //private final RetractArm retractArm = new RetractArm(0, arm);
   
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -76,6 +74,8 @@ public class RobotContainer {
     setupIO();
     setupDriveTrainCommand();
     configureBindings();
+    SmartDashboard.putNumber("auto 1", 1);
+    SmartDashboard.putNumber("auto 2", 2);
   }
 
   /** Instantiate Joysticks and Controllers */
@@ -115,19 +115,20 @@ public class RobotContainer {
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
 
-    JoystickButton XboxLeftTrigger = new JoystickButton(operatorController, XboxController.Axis.kLeftTrigger.value);
-    JoystickButton XboxRightTrigger = new JoystickButton(operatorController, XboxController.Axis.kRightTrigger.value);
+    JoystickButton XboxLeftTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kLeftTrigger.value);
+    JoystickButton XboxRightTrigger = new JoystickButton(leftJoystick, XboxController.Axis.kRightTrigger.value);
     
-    XboxButtonA.whileTrue(intakeOn);
-    XboxButtonB.whileTrue(intakeReverse);
+    XboxButtonB.whileTrue(intakeOn);
+    XboxButtonA.whileTrue(intakeReverse);
   
-    XboxUpPad.whileTrue(extendArm);
-    XboxDownPad.whileTrue(retractArm);
+   // XboxUpPad.whileTrue(extendArm);
+   // XboxDownPad.whileTrue(retractArm);
 
+   // XboxRightTrigger.whileTrue(raiseArm);
     XboxLeftTrigger.whileTrue(lowerArm);
-    XboxRightTrigger.whileTrue(raiseArm);
 
-    XboxRightBumper.whileFalse(brakeOff).whileTrue(brakeOn);
+    XboxRightBumper.whileFalse(brakeOff);
+    XboxRightBumper.whileTrue(brakeOn);
   }
 
   /**
