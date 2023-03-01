@@ -17,7 +17,7 @@ public class ExtendArm extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExtendArm(Arm subsystem) {
+  public ExtendArm(double distanceInches, Arm subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);

@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public final class Autos {
   static double maxVelocityMetersPerSecond = 1;
@@ -24,6 +25,13 @@ public final class Autos {
 
   public static CommandBase exampleAuto(ExampleSubsystem subsystem) {
     return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
+  }
+
+  public CommandBase getAuto1(){
+    
+    return new SequentialCommandGroup(
+      
+    );
   }
 
   /** Create Ramsete Command that Follows a Trajectory */ 
