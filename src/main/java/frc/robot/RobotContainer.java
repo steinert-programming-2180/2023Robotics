@@ -51,10 +51,10 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Brake brake = new Brake();
 
-  //private final RaiseArm raiseArm = new RaiseArm(0, arm);
-  private final LowerArm lowerArm = new LowerArm(0, arm);
- //private final ExtendArm extendArm = new ExtendArm(0, arm);
-  //private final RetractArm retractArm = new RetractArm(0, arm);
+  private final RaiseArm raiseArm = new RaiseArm(arm);
+  private final LowerArm lowerArm = new LowerArm(arm);
+ private final ExtendArm extendArm = new ExtendArm(arm);
+  private final RetractArm retractArm = new RetractArm(arm);
   
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -121,10 +121,10 @@ public class RobotContainer {
     XboxButtonB.whileTrue(intakeOn);
     XboxButtonA.whileTrue(intakeReverse);
   
-   // XboxUpPad.whileTrue(extendArm);
-   // XboxDownPad.whileTrue(retractArm);
+   XboxUpPad.whileTrue(extendArm);
+   XboxDownPad.whileTrue(retractArm);
 
-   // XboxRightTrigger.whileTrue(raiseArm);
+   XboxRightTrigger.whileTrue(raiseArm);
     XboxLeftTrigger.whileTrue(lowerArm);
 
     XboxRightBumper.whileFalse(brakeOff);
