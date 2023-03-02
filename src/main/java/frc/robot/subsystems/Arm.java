@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -115,8 +116,16 @@ public class Arm extends SubsystemBase {
   public void stopRaising(){m_armRaiserMotor.set(0);}
   public void stopLowering(){m_armRaiserMotor.set(0);}
 
+  public double getTorque(){
+    return Units.lbsToKilograms(20) * 9.81 * Units.inchesToMeters(46);
+  }
+
+  public void counterTorque(){
+    double torque = getTorque();
+    m_armRaiserMotor.set(-0.05);
+  }
+
   @Override
-   
   public void periodic() {
     // This method will be called once per scheduler run
   }
