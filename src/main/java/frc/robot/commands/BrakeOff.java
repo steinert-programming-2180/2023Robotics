@@ -11,17 +11,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class BrakeOff extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Brake m_subsystem;
+  private final Brake brake;
 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param brake The subsystem used by this command.
    */
-  public BrakeOff(Brake subsystem) {
-    m_subsystem = subsystem;
+  public BrakeOff(Brake brake) {
+    this.brake = brake;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    addRequirements(brake);
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +31,7 @@ public class BrakeOff extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.break_acc(BreackConstants.servoOpenAngle);
+    brake.break_acc(BreackConstants.servoOpenAngle);
   }
 
   // Called once the command ends or is interrupted.

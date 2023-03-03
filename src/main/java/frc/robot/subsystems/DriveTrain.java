@@ -34,8 +34,7 @@ public class DriveTrain extends SubsystemBase {
   MotorControllerGroup leftMotorGroup;
   MotorControllerGroup rightMotorGroup;
 
-  Servo leftBrakeServo;
-  Servo rightBrakeServo;
+  Servo brakeServo;
   
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
@@ -56,8 +55,7 @@ public class DriveTrain extends SubsystemBase {
   );
 
   public DriveTrain() {
-    // leftBrakeServo = new Servo(DriveTrainConstants.leftServoID);
-    // rightBrakeServo = new Servo(DriveTrainConstants.rightServoID);
+    // brakeServo = new Servo(DriveTrainConstants.servoID);
 
     setupMotors();
     setupDriveTrainSensors();
@@ -119,21 +117,19 @@ public class DriveTrain extends SubsystemBase {
   public void stopMoving(){ difDrive.setMaxOutput(0); }
 
   // Brakes
-  public void activateBrakes(){
-    stopMoving();
-    leftBrakeServo.set(1);
-    //rightBrakeServo.set(1);
-  }
+  // public void activateBrakes(){
+  //   stopMoving();
+  //   brakeServo.set(1);
+  // }
 
-  public boolean isInBrakeMode() {
-    return leftBrakeServo.get() == 1 || rightBrakeServo.get() == 1;
-  }
+  // public boolean isInBrakeMode() {
+  //   return brakeServo.get() == 1;
+  // }
 
-  public void deactivateBrakes(){
-    resetSpeedLimit();
-    leftBrakeServo.set(0);
-    rightBrakeServo.set(0);
-  }
+  // public void deactivateBrakes(){
+  //   resetSpeedLimit();
+  //   brakeServo.set(0);
+  // }
 
   // Sensors + Odometry
   public void resetSensors(){
@@ -167,8 +163,8 @@ public class DriveTrain extends SubsystemBase {
   
   /** Set Motor Speeds by using Voltage instead of Percent */
   public void tankDriveVolts(double leftVolts, double rightVolts){
-    SmartDashboard.putNumber("Left Volts", leftVolts);
-    SmartDashboard.putNumber("Right Volts", leftVolts);
+   // SmartDashboard.putNumber("Left Volts", leftVolts);
+    // SmartDashboard.putNumber("Right Volts", leftVolts);
     // System.out.println(leftVolts);
 
     leftMotorGroup.setVoltage(leftVolts);

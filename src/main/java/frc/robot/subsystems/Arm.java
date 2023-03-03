@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
@@ -39,7 +40,7 @@ public class Arm extends SubsystemBase {
     m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmRaiserMotorID, MotorType.kBrushless);
     m_armExtenderMotor = new CANSparkMax(ArmConstants.ArmExtendMotorID, MotorType.kBrushless);
 
-    m_armRaiserMotor.setIdleMode(IdleMode.kCoast);
+    m_armRaiserMotor.setIdleMode(IdleMode.kBrake);
     m_armExtenderMotor.setIdleMode(IdleMode.kBrake);
   
     elevationEncoder = m_armRaiserMotor.getEncoder();
@@ -97,7 +98,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void lowerArm() {
-    double armSpeed = isOverLowering() ? 0:ArmConstants.armLiftingSpeed;
+    double armSpeed = isOverLowering() ? 0:ArmConstants.armFallingSpeed;
     m_armRaiserMotor.set(armSpeed);
   }
 
@@ -128,6 +129,11 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    double extensionTemperature = m_armExtenderMotor.getMotorTemperature();
+    double raisingTemperature = m_armRaiserMotor.getMotorTemperature();
+
+    SmartDashboard.putNumber("Ext Motor", extensionTemperature);
+    SmartDashboard.putNumber("Raising Temp", raisingTemperature);
   }
 
   @Override

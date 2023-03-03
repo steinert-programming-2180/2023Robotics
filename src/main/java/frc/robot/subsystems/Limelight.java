@@ -38,9 +38,6 @@ public class Limelight extends SubsystemBase {
     @Override
     public void periodic() {
         putItems();
-        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-        System.out.println(targetOffsetAngle_Vertical);
-        
     }
 
     /**
@@ -148,7 +145,7 @@ public class Limelight extends SubsystemBase {
         SmartDashboard.putNumber("LimelightArea", area);
 
         // Gets the horizontal distance from the target
-         System.out.println(getHorizontalDistance());
+        // System.out.println(getHorizontalDistance());
 
         // If this distance is positive, i.e. didn't trigger a failsafe, put it to
         // SmartDashboard

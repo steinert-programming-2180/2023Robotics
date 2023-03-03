@@ -20,8 +20,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final int leftServoID = 0;
-    public static final int rightServoID = 1;
+    public static final int servoID = 0;
 
     public static final double wheelWidthInches = 6;
 
@@ -49,12 +48,13 @@ public final class Constants {
     public static final int RetractionLimitSwitchID = 4;
 
     public static final double armLiftingSpeed = 0.65; 
+    public static final double armFallingSpeed = 0.3;
     public static final double armExtensionSpeed = 0.7; 
   }
 
   public static class IntakeConstants{
     public static final int intakeMotorID = 7;
-    public static final double intakeSpeed = 0.5;
+    public static final double intakeSpeed = 0.65;
   }
 
   public static class LimelightConstants {
@@ -71,7 +71,7 @@ public final class Constants {
   }
 
   public static class BreackConstants {
-    public static int ServoId=1;
+    public static int ServoId=0;
     public static int servoOpenAngle=0;
     public static int servoCloseAngle=90;
   }
