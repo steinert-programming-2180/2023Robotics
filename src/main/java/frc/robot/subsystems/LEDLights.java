@@ -24,6 +24,9 @@ public class LEDLights extends SubsystemBase {
      *
      * @return a command
      */
+    public CommandBase turnOffLEDsCommand(){
+        return run( () -> setAllLEDsOff());
+    }
     public CommandBase turnOnYellowCommand() {
         return run( () -> {
             setYellowLEDOn();

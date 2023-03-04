@@ -50,8 +50,12 @@ public class Brake extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  public void break_acc(double degree){
+  public void setAngle(double degree){
     breakServo.setAngle(degree);
+  }
+
+  public void setPosition(double position){
+    breakServo.set(position);
   }
 
 }
