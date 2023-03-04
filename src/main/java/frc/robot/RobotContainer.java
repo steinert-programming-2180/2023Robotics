@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BrakeOff;
 import frc.robot.commands.BrakeOn;
 import frc.robot.commands.ExtendArm;
+import frc.robot.commands.ExtendArmByPins;
 import frc.robot.commands.IntakeOn;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.LowerArm;
@@ -64,6 +65,8 @@ public class RobotContainer {
 
   private final BrakeOn brakeOn = new BrakeOn(brake);
   private final BrakeOff brakeOff = new BrakeOff(brake);
+
+  private final ExtendArmByPins extendArmByPins = new ExtendArmByPins(arm, 36);
 
   Joystick leftJoystick;
   Joystick rightJoystick;
@@ -150,15 +153,21 @@ public class RobotContainer {
     drivetrain.resetSensors();
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d()),
-        List.of(),
-        new Pose2d(1, 0, new Rotation2d()),
-        trajectoryConfig);
-    return new SequentialCommandGroup(
-        Commands.runOnce(
-            () -> drivetrain.resetSensors(),
-            drivetrain),
-        new TurnToAngle(90, drivetrain));
+      new Pose2d(0, 0, new Rotation2d()),
+      List.of(),
+      new Pose2d(1, 0, new Rotation2d()),
+      trajectoryConfig
+    );
+    return Commands.run(
+      () -> drivetrain.arcadeDrive(0.1, 0)
+    );
+    // return new SequentialCommandGroup(
+    //   Commands.runOnce(
+    //     () -> drivetrain.resetSensors(),
+    //     drivetrain
+    //   ),
+    //   new TurnToAngle(90, drivetrain)
+    // );
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }

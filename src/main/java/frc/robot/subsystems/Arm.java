@@ -4,17 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax m_armRaiserMotor; 
@@ -122,8 +122,20 @@ public class Arm extends SubsystemBase {
   }
 
   public void counterTorque(){
-    double torque = getTorque();
     m_armRaiserMotor.set(-0.05);
+  }
+
+  public void extendByPins(int amountOfPins){
+    
+  }
+
+  public double getPositionForPins(int amountOfPins){
+    return -23.97604751586914 * amountOfPins/36;
+  }
+
+  public double getPinPosition(){
+    
+    return extensionEncoder.getPosition() / -23.97604751586914 * 36;
   }
 
   @Override

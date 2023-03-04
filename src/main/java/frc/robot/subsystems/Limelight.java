@@ -33,6 +33,7 @@ public class Limelight extends SubsystemBase {
      * depricated.
      */
     public Limelight() {
+        setCameraMode(0);
     }
 
     @Override
@@ -128,6 +129,7 @@ public class Limelight extends SubsystemBase {
 
         SmartDashboard.putBoolean("Has Target?", hasTarget());
         SmartDashboard.putBoolean("Is Tracking?", isTracking());
+        SmartDashboard.putNumber("Cam Mode", getCameraMode());
 
         // If there is no target, we just end here
         if (!hasTarget()) {

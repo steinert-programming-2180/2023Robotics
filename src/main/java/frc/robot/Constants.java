@@ -48,7 +48,7 @@ public final class Constants {
     public static final int RetractionLimitSwitchID = 4;
 
     public static final double armLiftingSpeed = 0.65; 
-    public static final double armFallingSpeed = 0.3;
+    public static final double armFallingSpeed = 0.15;
     public static final double armExtensionSpeed = 0.7; 
   }
 
