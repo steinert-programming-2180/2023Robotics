@@ -111,7 +111,7 @@ public class RobotContainer {
       drivetrain);
   }
 
-  private void setupDriveTrainCommand() {
+  public void setupDriveTrainCommand() {
     CommandBase driveCommand = getTankDriveCommand();
     drivetrain.setDefaultCommand(driveCommand);
   }

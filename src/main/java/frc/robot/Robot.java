@@ -32,8 +32,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
-
+    CameraServer.startAutomaticCapture(0);
     
   }
 
@@ -67,7 +66,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -76,7 +74,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // m_robotContainer.drivetrain.arcadeDrive(0.5, 0);
+  }
 
   @Override
   public void teleopInit() {
@@ -86,10 +86,12 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     // Starts Camera for the Claw
-    CameraServer.startAutomaticCapture();
 
     limelight = new Limelight();
     
+    // m_robotContainer.drivetrain.arcadeDrive(0, 0);
+    // m_robotContainer.setupDriveTrainCommand();
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
