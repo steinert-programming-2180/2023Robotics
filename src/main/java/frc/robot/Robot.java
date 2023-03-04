@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,6 +23,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Limelight limelight;
   private RobotContainer m_robotContainer;
+
+  PWM pwm;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -32,8 +36,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     
+    pwm = new PWM(1);
 
-    
+    pwm.setSpeed(1);
   }
 
   /**
@@ -51,7 +56,6 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    
     
   }
 
@@ -91,7 +95,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // pwm.setSpeed(1);
+  }
 
   @Override
   public void testInit() {
