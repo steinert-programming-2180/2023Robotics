@@ -14,6 +14,7 @@ import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.RaiseArm;
 import frc.robot.commands.RetractArm;
+import frc.robot.commands.SetSpeedLimit;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Brake;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -93,13 +95,24 @@ public class RobotContainer {
   }
 
   /** Create Default Command so Joysticks ALWAYS control drivetrain */
-  private void setupDriveTrainCommand() {
-    RunCommand driveCommand = new RunCommand(
-        () -> drivetrain.arcadeDrive(
-            Math.abs(leftJoystick.getY()) <= .1 ? 0 : leftJoystick.getY(),
-            Math.abs(leftJoystick.getX()) <= .1 ? 0 : leftJoystick.getX()),
-        drivetrain);
+  private CommandBase getArcadeDriveCommand(){
+    return new RunCommand(
+      () -> drivetrain.arcadeDrive(
+          Math.abs(leftJoystick.getY()) <= .1 ? 0 : leftJoystick.getY(),
+          Math.abs(leftJoystick.getX()) <= .1 ? 0 : leftJoystick.getX()),
+      drivetrain);
+  }
 
+  private CommandBase getTankDriveCommand(){
+    return new RunCommand(
+      () -> drivetrain.move(
+          leftJoystick.getY(),
+          rightJoystick.getY()),
+      drivetrain);
+  }
+
+  private void setupDriveTrainCommand() {
+    CommandBase driveCommand = getTankDriveCommand();
     drivetrain.setDefaultCommand(driveCommand);
   }
 
@@ -126,11 +139,17 @@ public class RobotContainer {
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
 
+    JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
+    JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
+
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
 
     Trigger XboxLeftTrigger = new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5);
     Trigger XboxRightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.5);
+
+    (leftTrigger.and(rightTrigger)).whileTrue(new SetSpeedLimit(drivetrain));
+    (leftTrigger.or(rightTrigger)).whileTrue(new SetSpeedLimit(0.75, drivetrain));
 
     XboxButtonY
     .toggleOnTrue(ledLights.turnOnYellowCommand())
