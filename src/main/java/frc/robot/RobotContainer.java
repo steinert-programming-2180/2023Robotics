@@ -20,6 +20,7 @@ import frc.robot.subsystems.Brake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDLights;
 
 import java.util.List;
 
@@ -50,10 +51,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm();
   private final Intake intake = new Intake();
   private final Brake brake = new Brake();
+  private final LEDLights ledLights = new LEDLights();
 
   private final RaiseArm raiseArm = new RaiseArm(arm);
   private final LowerArm lowerArm = new LowerArm(arm);
@@ -119,6 +120,8 @@ public class RobotContainer {
   private void configureBindings() {
     JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
     JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
+    JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
+    JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
 
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -128,6 +131,10 @@ public class RobotContainer {
 
     Trigger XboxLeftTrigger = new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5);
     Trigger XboxRightTrigger = new Trigger(() -> operatorController.getRightTriggerAxis() > 0.5);
+
+    XboxButtonY
+    .toggleOnTrue(ledLights.turnOnYellowCommand())
+    .toggleOnFalse(ledLights.turnOnPurpleCommand());
 
     XboxButtonA.whileTrue(intakeOn);
     XboxButtonB.whileTrue(intakeReverse);

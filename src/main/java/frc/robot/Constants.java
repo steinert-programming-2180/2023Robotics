@@ -19,6 +19,11 @@ public final class Constants {
     public static final int operatorControllerPort = 2;
   }
 
+  public static class LEDConstants{
+    public static final int yellowPort = 0;
+    public static final int purplePort = 15;
+  }
+
   public static class DriveTrainConstants {
     public static final int servoID = 0;
 

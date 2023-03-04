@@ -6,15 +6,17 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LEDConstants;
 
 public class LEDLights extends SubsystemBase {
     Solenoid yellowLED;
     Solenoid purpleLED;
 
     public LEDLights() {
-        yellowLED = new Solenoid(PneumaticsModuleType.REVPH, 0);
-        purpleLED = new Solenoid(PneumaticsModuleType.REVPH, 0);
+        yellowLED = new Solenoid(PneumaticsModuleType.REVPH, LEDConstants.yellowPort);
+        purpleLED = new Solenoid(PneumaticsModuleType.REVPH, LEDConstants.purplePort);
     }
 
     /**
@@ -22,13 +24,16 @@ public class LEDLights extends SubsystemBase {
      *
      * @return a command
      */
-    public CommandBase exampleMethodCommand() {
-        // Inline construction of command goes here.
-        // Subsystem::RunOnce implicitly requires `this` subsystem.
-        return runOnce(
-                () -> {
-                    /* one-time action goes here */
-                });
+    public CommandBase turnOnYellowCommand() {
+        return run( () -> {
+            setYellowLEDOn();
+        } );
+    }
+
+    public CommandBase turnOnPurpleCommand(){
+        return run( () -> {
+            setPurpleLEDOn();
+        } );
     }
 
     public void setPurpleLEDOn(){
