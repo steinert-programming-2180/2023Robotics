@@ -144,6 +144,13 @@ public class RobotContainer {
     JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
     JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
+    Trigger rightButtonThree = new JoystickButton(rightJoystick, 3);
+    Trigger leftButtonThree = new JoystickButton(leftJoystick, 3);
+
+    rightButtonThree.or(leftButtonThree).whileTrue(new RunCommand(() ->
+      drivetrain.arcadeDrive(Math.max(leftJoystick.getY(), rightJoystick.getY()), 0),
+      drivetrain));
+
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxRightPad = new Trigger(() -> operatorController.getPOV() == 90);
     Trigger XboxDownPad = new Trigger(() -> operatorController.getPOV() == 180);
