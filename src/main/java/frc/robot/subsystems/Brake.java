@@ -4,16 +4,17 @@
 
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BreackConstants;
 
 public class Brake extends SubsystemBase {
-  Servo breakServo;
+  Servo brakeServo;
   
   /** Creates a new ExampleSubsystem. */
   public Brake() {
-    breakServo = new Servo(BreackConstants.ServoId);
+    brakeServo = new Servo(BreackConstants.ServoId);
   }
 
   /**
@@ -43,6 +44,7 @@ public class Brake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Brake", getRaw());
   }
 
   @Override
@@ -50,12 +52,15 @@ public class Brake extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  public void setAngle(double degree){
-    breakServo.setAngle(degree);
+  public void engageBrakes(){
+    brakeServo.setRaw(255);
   }
 
-  public void setPosition(double position){
-    breakServo.set(position);
+  public void disengageBrakes(){
+    brakeServo.setRaw(0);
   }
-
+  
+  public double getRaw(){
+    return brakeServo.getRaw();
+  }
 }

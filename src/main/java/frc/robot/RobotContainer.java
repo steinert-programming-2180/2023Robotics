@@ -83,7 +83,7 @@ public class RobotContainer {
   public RobotContainer() {
     drivetrain = new DriveTrain();
     setupIO();
-    setupDriveTrainCommand();
+    // setupDriveTrainCommand();
     configureBindings();
   }
 
@@ -135,6 +135,8 @@ public class RobotContainer {
     JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
     JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
     JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
+    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kStart.value);
+    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kBack.value);
 
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -164,7 +166,8 @@ public class RobotContainer {
     XboxRightTrigger.whileTrue(raiseArm);
 
     // XboxUpPad.onTrue(brakeOn).onFalse(brakeOff);
-    XboxLeftPad.whileTrue(brakeOn);
+    XboxButtonMap.whileTrue(brakeOn);
+    XboxButtonPause.whileTrue(brakeOff);
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
