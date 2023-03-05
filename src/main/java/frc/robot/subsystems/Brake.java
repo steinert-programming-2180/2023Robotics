@@ -45,6 +45,9 @@ public class Brake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Brake", getRaw());
+    SmartDashboard.putNumber("Brake 2", brakeServo.getPosition());
+    SmartDashboard.putNumber("Brake 3", brakeServo.getAngle());
+
   }
 
   @Override
@@ -54,10 +57,11 @@ public class Brake extends SubsystemBase {
 
   public void engageBrakes(){
     brakeServo.setRaw(255);
+    // brakeServo.set(1);
   }
 
   public void disengageBrakes(){
-    brakeServo.setRaw(0);
+    brakeServo.setRaw(-255);
   }
   
   public double getRaw(){

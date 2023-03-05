@@ -144,12 +144,17 @@ public class RobotContainer {
     JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
     JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
 
-    Trigger rightButtonThree = new JoystickButton(rightJoystick, 3);
-    Trigger leftButtonThree = new JoystickButton(leftJoystick, 3);
+    JoystickButton rightButtonThree = new JoystickButton(rightJoystick, 3);
+    JoystickButton leftButtonThree = new JoystickButton(leftJoystick, 3);
 
-    rightButtonThree.or(leftButtonThree).whileTrue(new RunCommand(() ->
-      drivetrain.arcadeDrive(Math.max(leftJoystick.getY(), rightJoystick.getY()), 0),
-      drivetrain));
+    rightButtonThree.and(leftButtonThree).whileTrue(new SetSpeedLimit(0.15, drivetrain));
+
+    rightButtonThree.or(leftButtonThree).whileTrue(
+      new RunCommand(
+        () -> drivetrain.arcadeDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 0),
+        drivetrain
+      )
+    );
 
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxRightPad = new Trigger(() -> operatorController.getPOV() == 90);
@@ -172,15 +177,13 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);    
     XboxRightTrigger.whileTrue(raiseArm);
 
-    // XboxUpPad.onTrue(brakeOn).onFalse(brakeOff);
-    XboxButtonMap.whileTrue(brakeOn);
-    XboxButtonPause.whileTrue(brakeOff);
+    XboxUpPad.onTrue(brakeOn).onFalse(brakeOff);
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
     
-    // XboxRightBumper.whileFalse(brakeOff);
-    // XboxRightBumper.whileTrue(brakeOn);
+    XboxLeftBumper.whileTrue(brakeOff);
+    XboxRightBumper.whileTrue(brakeOn);
   }
 
   /**
