@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,7 +89,11 @@ public class DriveTrain extends SubsystemBase {
 
   /** Instantiate NavX and Left/Right Encoders */
   private void setupDriveTrainSensors(){
-    navx = new AHRS(Port.kMXP);
+    /*
+    IMPORTANT NOTE: don't pass in a parameter while making the navx. 
+    Just use the default constructor. I2C.kMXP port cause issues. SPI doesn't.
+    */
+    navx = new AHRS();
     leftEncoder = leftMotors[0].getEncoder();
     rightEncoder = rightMotors[0].getEncoder();
   }
