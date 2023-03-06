@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class IntakeOn extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Intake intake;
+  private double speed = 0;
 
   /**
    * Creates a new ExampleCommand.
@@ -18,7 +20,12 @@ public class IntakeOn extends CommandBase {
    * @param intake The subsystem used by this command.
    */
   public IntakeOn(Intake intake) {
+    this(intake, IntakeConstants.intakeSpeed);
+  }
+
+  public IntakeOn(Intake intake, double speed){
     this.intake = intake;
+    this.speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
   }
@@ -30,7 +37,7 @@ public class IntakeOn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.intakeOn();
+    intake.intakeOn(speed);
   }
 
   // Called once the command ends or is interrupted.

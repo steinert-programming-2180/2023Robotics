@@ -15,6 +15,7 @@ import frc.robot.commands.LowerArm;
 import frc.robot.commands.RaiseArm;
 import frc.robot.commands.RetractArm;
 import frc.robot.commands.SetSpeedLimit;
+import frc.robot.commands.TimedCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Brake;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -95,20 +97,20 @@ public class RobotContainer {
   }
 
   /** Create Default Command so Joysticks ALWAYS control drivetrain */
-  private CommandBase getArcadeDriveCommand(){
+  private CommandBase getArcadeDriveCommand() {
     return new RunCommand(
-      () -> drivetrain.arcadeDrive(
-          Math.abs(leftJoystick.getY()) <= .1 ? 0 : leftJoystick.getY(),
-          Math.abs(leftJoystick.getX()) <= .1 ? 0 : leftJoystick.getX()),
-      drivetrain);
+        () -> drivetrain.arcadeDrive(
+            Math.abs(leftJoystick.getY()) <= .1 ? 0 : leftJoystick.getY(),
+            Math.abs(leftJoystick.getX()) <= .1 ? 0 : leftJoystick.getX()),
+        drivetrain);
   }
 
-  private CommandBase getTankDriveCommand(){
+  private CommandBase getTankDriveCommand() {
     return new RunCommand(
-      () -> drivetrain.move(
-          leftJoystick.getY(),
-          rightJoystick.getY()),
-      drivetrain);
+        () -> drivetrain.move(
+            leftJoystick.getY(),
+            rightJoystick.getY()),
+        drivetrain);
   }
 
   public void setupDriveTrainCommand() {
@@ -150,11 +152,9 @@ public class RobotContainer {
     rightButtonThree.and(leftButtonThree).whileTrue(new SetSpeedLimit(0.15, drivetrain));
 
     rightButtonThree.or(leftButtonThree).whileTrue(
-      new RunCommand(
-        () -> drivetrain.arcadeDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 0),
-        drivetrain
-      )
-    );
+        new RunCommand(
+            () -> drivetrain.arcadeDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 0),
+            drivetrain));
 
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxRightPad = new Trigger(() -> operatorController.getPOV() == 90);
@@ -174,14 +174,14 @@ public class RobotContainer {
     XboxButtonA.whileTrue(intakeOn);
     XboxButtonB.whileTrue(intakeReverse);
 
-    XboxLeftTrigger.whileTrue(lowerArm);    
+    XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    XboxUpPad.onTrue(brakeOn).onFalse(brakeOff);
+    XboxLeftPad.onTrue(brakeOn).onFalse(brakeOff);
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
-    
+
     XboxLeftBumper.whileTrue(brakeOff);
     XboxRightBumper.whileTrue(brakeOn);
   }
@@ -195,21 +195,21 @@ public class RobotContainer {
     drivetrain.resetSensors();
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d()),
-      List.of(),
-      new Pose2d(1, 0, new Rotation2d()),
-      trajectoryConfig
+        new Pose2d(0, 0, new Rotation2d()),
+        List.of(),
+        new Pose2d(1, 0, new Rotation2d()),
+        trajectoryConfig);
+
+    CommandBase moveForward = new TimedCommand(new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.75, 0),
+        () -> drivetrain.arcadeDrive(0, 0),
+        drivetrain),
+        4);
+    CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
+    CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
+    return new SequentialCommandGroup(
+      raiseArmSlightly, brieflyReverseIntake, moveForward
     );
-    return Commands.run(
-      () -> drivetrain.arcadeDrive(0.1, 0)
-    );
-    // return new SequentialCommandGroup(
-    //   Commands.runOnce(
-    //     () -> drivetrain.resetSensors(),
-    //     drivetrain
-    //   ),
-    //   new TurnToAngle(90, drivetrain)
-    // );
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }

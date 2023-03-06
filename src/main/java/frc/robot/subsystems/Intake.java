@@ -31,11 +31,17 @@ public class Intake extends SubsystemBase {
         });
   }
   public void IntakeRevese() {
-    clawMotor.set(-IntakeConstants.intakeSpeed);
+    IntakeRevese(-IntakeConstants.intakeSpeed);
+  }
+  public void IntakeRevese(double intakeSpeed) {
+    clawMotor.set(-Math.abs(intakeSpeed));
   }
   
   public void intakeOn() {
-    clawMotor.set(IntakeConstants.intakeSpeed);
+    intakeOn(IntakeConstants.intakeSpeed);
+  }
+  public void intakeOn(double intakeSpeed) {
+    clawMotor.set(Math.abs(intakeSpeed));
   }
 
   public void intakeStop() {

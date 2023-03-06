@@ -8,10 +8,12 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.commands.TimedCommand;
 import frc.robot.subsystems.Limelight;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
@@ -24,6 +26,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Limelight limelight;
   private RobotContainer m_robotContainer;
+  double autoTimeLimitInSeconds = 4;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -69,15 +72,15 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_robotContainer.drivetrain.arcadeDrive(-0.5, 0);
+    
   }
 
   @Override
@@ -88,6 +91,7 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     // Starts Camera for the Claw
+ 
 
     limelight = new Limelight();
     

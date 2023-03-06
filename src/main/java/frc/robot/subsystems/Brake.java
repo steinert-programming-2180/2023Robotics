@@ -61,7 +61,7 @@ public class Brake extends SubsystemBase {
   }
 
   public void disengageBrakes(){
-    brakeServo.setRaw(-255);
+    brakeServo.setRaw(0);
   }
   
   public double getRaw(){
