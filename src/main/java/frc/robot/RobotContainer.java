@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BrakeOff;
 import frc.robot.commands.BrakeOn;
+import frc.robot.commands.DriveForward;
 import frc.robot.commands.ExtendArm;
 import frc.robot.commands.ExtendArmByPins;
 import frc.robot.commands.IntakeOn;
@@ -193,23 +194,24 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d()),
-        List.of(),
-        new Pose2d(1, 0, new Rotation2d()),
-        trajectoryConfig);
+    return new DriveForward(drivetrain, 12);
+    // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
+    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     new Pose2d(0, 0, new Rotation2d()),
+    //     List.of(),
+    //     new Pose2d(1, 0, new Rotation2d()),
+    //     trajectoryConfig);
 
-    CommandBase moveForward = new TimedCommand(new StartEndCommand(
-        () -> drivetrain.arcadeDrive(0.75, 0),
-        () -> drivetrain.arcadeDrive(0, 0),
-        drivetrain),
-        4);
-    CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
-    CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
-    return new SequentialCommandGroup(
-      raiseArmSlightly, brieflyReverseIntake, moveForward
-    );
+    // CommandBase moveForward = new TimedCommand(new StartEndCommand(
+    //     () -> drivetrain.arcadeDrive(0.75, 0),
+    //     () -> drivetrain.arcadeDrive(0, 0),
+    //     drivetrain),
+    //     4);
+    // CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
+    // CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
+    // return new SequentialCommandGroup(
+    //   raiseArmSlightly, brieflyReverseIntake, moveForward
+    // );
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }

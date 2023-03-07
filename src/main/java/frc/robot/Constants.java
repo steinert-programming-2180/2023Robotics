@@ -32,13 +32,13 @@ public final class Constants {
     public static final int[] leftMotorIds = {3,4};
     public static final int[] rightMotorIds = {1,2};
 
-    public static final double P = 2.2477;
+    public static final double P = 2.3697;
     public static final double I = 0;  
-    public static final double D = 0.19153;
+    public static final double D = 0.22582;
 
-    public static final double kS = 0.29695;
-    public static final double kV = 0.10775;
-    public static final double kA = 0.0089831;
+    public static final double kS = 0.21077;
+    public static final double kV = 0.1066;
+    public static final double kA = 0.012185;
 
     public static final double gearRatio = 15.57/1.0;
   }

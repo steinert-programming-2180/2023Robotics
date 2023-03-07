@@ -157,6 +157,18 @@ public class DriveTrain extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public double getDistanceX(){
+    return navx.getDisplacementX();
+  }
+
+  public double getDistanceY(){
+    return navx.getDisplacementY();
+  }
+
+  public double getDistanceZ(){
+    return navx.getDisplacementZ();
+  }
+
   /** Get Robot Speeds */
   public DifferentialDriveWheelSpeeds getDifferentialDriveWheelSpeeds(){
     double leftMetersPerSecond = leftEncoder.getVelocity();
@@ -230,6 +242,9 @@ public class DriveTrain extends SubsystemBase {
     );
 
     SmartDashboard.putNumber("Angle", getYawRotation());
+    SmartDashboard.putNumber("X", getDistanceX());
+    SmartDashboard.putNumber("Y", getDistanceY());
+    SmartDashboard.putNumber("Z", getDistanceZ());
   }
 
   @Override
