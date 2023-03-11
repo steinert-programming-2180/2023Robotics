@@ -38,6 +38,8 @@ public class Arm extends SubsystemBase {
     // retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
 
     m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmRaiserMotorID, MotorType.kBrushless);
+    m_armRaiserMotor.setInverted(true);
+
     m_armExtenderMotor = new CANSparkMax(ArmConstants.ArmExtendMotorID, MotorType.kBrushless);
 
     m_armRaiserMotor.setIdleMode(IdleMode.kBrake);
@@ -45,20 +47,6 @@ public class Arm extends SubsystemBase {
   
     elevationEncoder = m_armRaiserMotor.getEncoder();
     extensionEncoder = m_armExtenderMotor.getEncoder();
-  }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public CommandBase exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce( 
-        () -> {
-          /* one-time action goes here */
-        });
   }
 
   public boolean isOverExtending() {
@@ -94,12 +82,12 @@ public class Arm extends SubsystemBase {
 
   public void raiseArm() {
     double armSpeed = isOverRaising() ? 0:ArmConstants.armLiftingSpeed;
-    m_armRaiserMotor.set(-armSpeed);
+    m_armRaiserMotor.set(armSpeed);
   }
 
   public void lowerArm() {
     double armSpeed = isOverLowering() ? 0:ArmConstants.armFallingSpeed;
-    m_armRaiserMotor.set(armSpeed);
+    m_armRaiserMotor.set(-armSpeed);
   }
 
   public void extendArm() {
@@ -122,7 +110,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void counterTorque(){
-    m_armRaiserMotor.set(-0.05);
+    m_armRaiserMotor.set(0.05);
   }
 
   public void extendByPins(int amountOfPins){
@@ -136,6 +124,14 @@ public class Arm extends SubsystemBase {
   public double getPinPosition(){
     
     return extensionEncoder.getPosition() / -23.97604751586914 * 36;
+  }
+
+  public void setRaiserVoltage(double voltage){
+    m_armRaiserMotor.setVoltage(voltage);
+  }
+
+  public double getArmPosition(){
+    return elevationEncoder.getPosition();
   }
 
   @Override

@@ -137,6 +137,7 @@ public class DriveTrain extends SubsystemBase {
   // Sensors + Odometry
   public void resetSensors(){
     navx.reset();
+    navx.resetDisplacement();
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
     resetOdometry(new Pose2d());
@@ -155,18 +156,6 @@ public class DriveTrain extends SubsystemBase {
 
   public Pose2d getPose(){
     return odometry.getPoseMeters();
-  }
-
-  public double getDistanceX(){
-    return navx.getDisplacementX();
-  }
-
-  public double getDistanceY(){
-    return navx.getDisplacementY();
-  }
-
-  public double getDistanceZ(){
-    return navx.getDisplacementZ();
   }
 
   /** Get Robot Speeds */
@@ -229,6 +218,18 @@ public class DriveTrain extends SubsystemBase {
 
     }
   }
+  
+  public double getDistanceX(){
+    return navx.getDisplacementX();
+  }
+
+  public double getDistanceY(){
+    return navx.getDisplacementY();
+  }
+
+  public double getDistanceZ(){
+    return navx.getDisplacementZ();
+  }
 
   @Override
   public void periodic() {
@@ -241,10 +242,17 @@ public class DriveTrain extends SubsystemBase {
       rightEncoder.getPosition()
     );
 
-    SmartDashboard.putNumber("Angle", getYawRotation());
-    SmartDashboard.putNumber("X", getDistanceX());
-    SmartDashboard.putNumber("Y", getDistanceY());
-    SmartDashboard.putNumber("Z", getDistanceZ());
+    // SmartDashboard.putNumber("Angle", getYawRotation());
+    // SmartDashboard.putNumber("X", getDistanceX());
+    // SmartDashboard.putNumber("Y", getDistanceY());
+    // SmartDashboard.putNumber("Z", getDistanceZ());
+    // SmartDashboard.putNumber("Left P", leftEncoder.getPosition());
+    // SmartDashboard.putNumber("Right P", rightEncoder.getPosition());
+    // SmartDashboard.putNumber("V Err 2", leftMotors[1].getEncoder().getVelocity()-leftMotors[0].getEncoder().getVelocity());
+    // // SmartDashboard.putNumber("Left V", leftEncoder.getVelocity());
+    // // SmartDashboard.putNumber("Right V", rightEncoder.getVelocity());
+    // SmartDashboard.putNumber("V Err", rightEncoder.getVelocity()-leftEncoder.getVelocity());
+    
   }
 
   @Override

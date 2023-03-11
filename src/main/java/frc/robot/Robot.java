@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -64,24 +65,29 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_robotContainer.drivetrain.resetSensors();
+    // pidController.setSetpoint(0.12);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
 
-    pidCommand = new PIDCommand(
-      pidController, 
-      m_robotContainer.drivetrain::getDistanceX, 
-      2, 
-      output -> m_robotContainer.drivetrain.arcadeDrive(output, 0),
-      m_robotContainer.drivetrain
-    );
+    // pidCommand = new PIDCommand(
+    //   pidController, 
+    //   m_robotContainer.drivetrain::getDistanceX, 
+    //   2, 
+    //   output -> m_robotContainer.drivetrain.arcadeDrive(output, 0),
+    //   m_robotContainer.drivetrain
+    // );
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    
+    // double speed = pidController.calculate(m_robotContainer.drivetrain.getDistanceX());
+    // SmartDashboard.putNumber("speed", speed);
+    // m_robotContainer.drivetrain.tankDrive(speed, Math.min(1.05*speed, 1));
   }
 
   @Override
@@ -103,6 +109,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    
   }
 
   @Override

@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -54,7 +57,19 @@ public final class Constants {
 
     public static final double armLiftingSpeed = 0.65; 
     public static final double armFallingSpeed = 0.15;
-    public static final double armExtensionSpeed = 0.7; 
+    public static final double armExtensionSpeed = 0.7;
+
+    public static final PIDController pidController = new PIDController(
+      0.16, 
+      0,
+      0.12 
+    );
+
+    public static final ArmFeedforward armFeedForward = new ArmFeedforward(
+      0.5647, 
+      0.7,
+      4 
+    );
   }
 
   public static class IntakeConstants{

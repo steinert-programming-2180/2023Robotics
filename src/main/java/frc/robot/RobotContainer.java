@@ -14,6 +14,7 @@ import frc.robot.commands.IntakeOn;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.RaiseArm;
+import frc.robot.commands.RaiseArmToLowerStand;
 import frc.robot.commands.RetractArm;
 import frc.robot.commands.SetSpeedLimit;
 import frc.robot.commands.TimedCommand;
@@ -65,6 +66,7 @@ public class RobotContainer {
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
   private final RetractArm retractArm = new RetractArm(arm);
+  private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -154,7 +156,7 @@ public class RobotContainer {
 
     rightButtonThree.or(leftButtonThree).whileTrue(
         new RunCommand(
-            () -> drivetrain.arcadeDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 0),
+            () -> drivetrain.tankDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 1.05*Math.min(leftJoystick.getY(), rightJoystick.getY())),
             drivetrain));
 
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
@@ -194,7 +196,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    return new DriveForward(drivetrain, 12);
+    return new SequentialCommandGroup(
+      new RaiseArmToLowerStand(arm),
+      new IntakeReverse(intake, .05)
+    );
+    // return new DriveForward(drivetrain, 12);
     // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
     // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
     //     new Pose2d(0, 0, new Rotation2d()),
