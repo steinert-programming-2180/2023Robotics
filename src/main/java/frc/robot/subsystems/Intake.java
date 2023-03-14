@@ -4,32 +4,36 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.PneumaticConstants;
 
 public class Intake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   CANSparkMax clawMotor;
+  DoubleSolenoid intakeSolenoid;
 
   public Intake() {
     clawMotor = new CANSparkMax(IntakeConstants.intakeMotorID, MotorType.kBrushless);
+    intakeSolenoid = new DoubleSolenoid(
+      PneumaticConstants.pneumaticsModuleType, 
+      IntakeConstants.solenoidOpenPort,
+      IntakeConstants.solenoidClosePort
+    );
   }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public CommandBase exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  public void closeIntake(){
+    intakeSolenoid.set(Value.kReverse);
   }
+
+  public void openIntake(){
+    intakeSolenoid.set(Value.kForward);
+  }
+
   public void IntakeRevese() {
     IntakeRevese(-IntakeConstants.intakeSpeed);
   }
@@ -56,6 +60,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Intake Temp", clawMotor.getMotorTemperature());
+    intakeOn(0.1);
   }
 
   @Override

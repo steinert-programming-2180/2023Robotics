@@ -4,10 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.PneumaticConstants;
 import frc.robot.subsystems.Limelight;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,6 +25,9 @@ public class Robot extends TimedRobot {
   private Limelight limelight;
   private RobotContainer m_robotContainer;
 
+  PneumaticHub pneumaticHub;
+  Compressor compressor;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -29,6 +37,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    pneumaticHub = new PneumaticHub();
+    compressor = new Compressor(1, PneumaticConstants.pneumaticsModuleType);
+    compressor.enableAnalog(PneumaticConstants.idealPSI-1, PneumaticConstants.idealPSI);
+
     CameraServer.startAutomaticCapture(0); // Starts Camera for the Claw
   }
 
@@ -77,6 +90,7 @@ public class Robot extends TimedRobot {
     
     m_robotContainer.drivetrain.arcadeDrive(0, 0);
     m_robotContainer.setupDriveTrainCommand();
+    m_robotContainer.intake.closeIntake();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

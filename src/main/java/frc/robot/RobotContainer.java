@@ -56,7 +56,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Arm arm = new Arm();
-  private final Intake intake = new Intake();
+  public final Intake intake = new Intake();
   private final Brake brake = new Brake();
   private final LEDLights ledLights = new LEDLights();
 
@@ -177,7 +177,19 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    XboxLeftPad.onTrue(brakeOn).onFalse(brakeOff);
+    // XboxLeftPad.onTrue(brakeOn).onFalse(brakeOff);
+    XboxLeftPad.whileTrue(
+      new RunCommand(
+        () -> intake.closeIntake(),
+        intake
+      )
+    );
+
+    XboxRightPad.whileTrue(
+      new RunCommand(
+        () -> intake.openIntake(), 
+        intake)
+    );
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
