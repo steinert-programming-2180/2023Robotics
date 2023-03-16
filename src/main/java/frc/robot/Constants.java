@@ -70,6 +70,10 @@ public final class Constants {
       0.7,
       4 
     );
+
+    public static double kS = 0.5647;
+    public static double kG = 0.7;
+    public static double kV = 4;
   }
 
   public static class IntakeConstants{
