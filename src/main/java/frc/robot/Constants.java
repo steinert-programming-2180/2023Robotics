@@ -44,9 +44,10 @@ public final class Constants {
     public static final double I = 0;  
     public static final double D = 0.19153;
 
-    public static final double kS = 0.29695;
-    public static final double kV = 0.10775;
-    public static final double kA = 0.0089831;
+    public static final double kS = 0.0000001;
+    public static final double kG = 1.61;
+    public static final double kV = 2.63;
+    public static final double kA = 0.15;
 
     public static final double gearRatio = 15.57/1.0;
   }
