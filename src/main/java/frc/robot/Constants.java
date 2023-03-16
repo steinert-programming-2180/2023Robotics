@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -40,9 +42,9 @@ public final class Constants {
     public static final int[] leftMotorIds = {3,4};
     public static final int[] rightMotorIds = {1,2};
 
-    public static final double P = 2.2477;
+    public static final double P = 2.3697;
     public static final double I = 0;  
-    public static final double D = 0.19153;
+    public static final double D = 0.22582;
 
     public static final double kS = 0.0000001;
     public static final double kG = 1.61;
@@ -51,6 +53,18 @@ public final class Constants {
 
     public static final double gearRatio = 15.57/1.0;
   }
+
+  public static final PIDController pidController = new PIDController(
+      0.16, 
+      0,
+      0.12 
+    );
+
+    public static final ArmFeedforward armFeedForward = new ArmFeedforward(
+      0.0000001, 
+      1.61,
+      2.63
+    );
 
   public static class ArmConstants {
     public static final int ArmRaiserMotorID = 5;
