@@ -7,12 +7,14 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BrakeOff;
 import frc.robot.commands.BrakeOn;
+import frc.robot.commands.DriveForward;
 import frc.robot.commands.ExtendArm;
 import frc.robot.commands.ExtendArmByPins;
 import frc.robot.commands.IntakeOn;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.RaiseArm;
+import frc.robot.commands.RaiseArmToLowerStand;
 import frc.robot.commands.RetractArm;
 import frc.robot.commands.SetSpeedLimit;
 import frc.robot.commands.TimedCommand;
@@ -55,7 +57,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Arm arm = new Arm();
+  public final Arm arm = new Arm();
   public final Intake intake = new Intake();
   private final Brake brake = new Brake();
   private final LEDLights ledLights = new LEDLights();
@@ -64,6 +66,7 @@ public class RobotContainer {
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
   private final RetractArm retractArm = new RetractArm(arm);
+  private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -153,7 +156,7 @@ public class RobotContainer {
 
     rightButtonThree.or(leftButtonThree).whileTrue(
         new RunCommand(
-            () -> drivetrain.arcadeDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 0),
+            () -> drivetrain.tankDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 1.05*Math.min(leftJoystick.getY(), rightJoystick.getY())),
             drivetrain));
 
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
@@ -205,23 +208,28 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d()),
-        List.of(),
-        new Pose2d(1, 0, new Rotation2d()),
-        trajectoryConfig);
-
-    CommandBase moveForward = new TimedCommand(new StartEndCommand(
-        () -> drivetrain.arcadeDrive(0.75, 0),
-        () -> drivetrain.arcadeDrive(0, 0),
-        drivetrain),
-        4);
-    CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
-    CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
     return new SequentialCommandGroup(
-      raiseArmSlightly, brieflyReverseIntake, moveForward
+      new RaiseArmToLowerStand(arm),
+      new IntakeReverse(intake, .05)
     );
+    // return new DriveForward(drivetrain, 12);
+    // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
+    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     new Pose2d(0, 0, new Rotation2d()),
+    //     List.of(),
+    //     new Pose2d(1, 0, new Rotation2d()),
+    //     trajectoryConfig);
+
+    // CommandBase moveForward = new TimedCommand(new StartEndCommand(
+    //     () -> drivetrain.arcadeDrive(0.75, 0),
+    //     () -> drivetrain.arcadeDrive(0, 0),
+    //     drivetrain),
+    //     4);
+    // CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
+    // CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
+    // return new SequentialCommandGroup(
+    //   raiseArmSlightly, brieflyReverseIntake, moveForward
+    // );
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }

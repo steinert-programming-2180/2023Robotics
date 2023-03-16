@@ -77,7 +77,23 @@ public final class Constants {
 
     public static final double armLiftingSpeed = 0.65; 
     public static final double armFallingSpeed = 0.15;
-    public static final double armExtensionSpeed = 0.7; 
+    public static final double armExtensionSpeed = 0.7;
+
+    public static final PIDController pidController = new PIDController(
+      0.16, 
+      0,
+      0.12 
+    );
+
+    public static final ArmFeedforward armFeedForward = new ArmFeedforward(
+      0.5647, 
+      0.7,
+      4 
+    );
+
+    public static double kS = 0.5647;
+    public static double kG = 0.7;
+    public static double kV = 4;
   }
 
   public static class IntakeConstants{

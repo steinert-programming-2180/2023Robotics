@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +28,7 @@ public class Arm extends SubsystemBase {
 
   private RelativeEncoder elevationEncoder;
   private RelativeEncoder extensionEncoder;
+  private ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);
 
 
   /** Creates a new ExampleSubsystem. */
@@ -38,6 +40,8 @@ public class Arm extends SubsystemBase {
     // retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
 
     m_armRaiserMotor = new CANSparkMax(ArmConstants.ArmRaiserMotorID, MotorType.kBrushless);
+    m_armRaiserMotor.setInverted(true);
+
     m_armExtenderMotor = new CANSparkMax(ArmConstants.ArmExtendMotorID, MotorType.kBrushless);
 
     m_armRaiserMotor.setIdleMode(IdleMode.kBrake);
@@ -45,20 +49,6 @@ public class Arm extends SubsystemBase {
   
     elevationEncoder = m_armRaiserMotor.getEncoder();
     extensionEncoder = m_armExtenderMotor.getEncoder();
-  }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public CommandBase exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce( 
-        () -> {
-          /* one-time action goes here */
-        });
   }
 
   public boolean isOverExtending() {
@@ -94,12 +84,12 @@ public class Arm extends SubsystemBase {
 
   public void raiseArm() {
     double armSpeed = isOverRaising() ? 0:ArmConstants.armLiftingSpeed;
-    m_armRaiserMotor.set(-armSpeed);
+    m_armRaiserMotor.set(armSpeed);
   }
 
   public void lowerArm() {
     double armSpeed = isOverLowering() ? 0:ArmConstants.armFallingSpeed;
-    m_armRaiserMotor.set(armSpeed);
+    m_armRaiserMotor.set(-armSpeed);
   }
 
   public void extendArm() {
@@ -122,7 +112,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void counterTorque(){
-    m_armRaiserMotor.set(-0.05);
+    m_armRaiserMotor.set(0.05);
   }
 
   public void extendByPins(int amountOfPins){
@@ -138,14 +128,53 @@ public class Arm extends SubsystemBase {
     return extensionEncoder.getPosition() / -23.97604751586914 * 36;
   }
 
+  public void setRaiserVoltage(double voltage){
+    m_armRaiserMotor.setVoltage(voltage);
+  }
+
+  public double getArmPosition(){
+    return elevationEncoder.getPosition();
+  }
+
+  public void testInit(){
+    elevationEncoder.setPosition(0);
+
+  }
+
+  // ONLY testing
+  public void testPeriodic(){
+    double p = SmartDashboard.getNumber("P", 0.16);
+    // double i = SmartDashboard.getNumber("i", 0);
+    double d = SmartDashboard.getNumber("d", 0.12);
+
+    double s = SmartDashboard.getNumber("s", 0.5647);
+    double g = SmartDashboard.getNumber("g", 0.7);
+    double v = SmartDashboard.getNumber("v", 4);
+
+    ArmConstants.pidController.setP(p);
+    ArmConstants.pidController.setD(d);
+    ArmConstants.pidController.setSetpoint(54);
+
+    armFeedforward = new ArmFeedforward(s, g, v);
+
+    SmartDashboard.putNumber("Arm", getArmPosition());
+    SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
+
+    double feedForwardCalc = ArmConstants.armFeedForward.calculate(getArmPosition(), 0.5);
+    double pidCalc = ArmConstants.pidController.calculate(getArmPosition());
+    setRaiserVoltage(feedForwardCalc + pidCalc);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     double extensionTemperature = m_armExtenderMotor.getMotorTemperature();
     double raisingTemperature = m_armRaiserMotor.getMotorTemperature();
+    double armPosition = elevationEncoder.getPosition();
 
     SmartDashboard.putNumber("Ext Motor", extensionTemperature);
     SmartDashboard.putNumber("Raising Temp", raisingTemperature);
+    SmartDashboard.putNumber("Arm Pos", armPosition);
   }
 
   @Override
