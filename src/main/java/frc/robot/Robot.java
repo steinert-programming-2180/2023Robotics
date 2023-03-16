@@ -14,10 +14,7 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants.DriveTrainConstants;
-<<<<<<< HEAD
 import frc.robot.Constants.PneumaticConstants;
-=======
->>>>>>> PID
 import frc.robot.subsystems.Limelight;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

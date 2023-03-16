@@ -147,9 +147,10 @@ public class Arm extends SubsystemBase {
     // double i = SmartDashboard.getNumber("i", 0);
     double d = SmartDashboard.getNumber("d", 0.12);
 
-    double s = SmartDashboard.getNumber("s", 0.5647);
-    double g = SmartDashboard.getNumber("g", 0.7);
-    double v = SmartDashboard.getNumber("v", 4);
+    double s = SmartDashboard.getNumber("s", 0.0000001);
+    double g = SmartDashboard.getNumber("g", 1.61);
+    double v = SmartDashboard.getNumber("v", 2.63);
+    double a = SmartDashboard.getNumber("a", 0.15);
 
     ArmConstants.pidController.setP(p);
     ArmConstants.pidController.setD(d);
