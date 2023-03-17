@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.PneumaticConstants;
 import frc.robot.subsystems.Limelight;
@@ -45,6 +46,16 @@ public class Robot extends TimedRobot {
     pneumaticHub = new PneumaticHub();
     compressor = new Compressor(1, PneumaticConstants.pneumaticsModuleType);
     compressor.enableAnalog(PneumaticConstants.idealPSI-1, PneumaticConstants.idealPSI);
+
+    SmartDashboard.putNumber("p", ArmConstants.pidController.getP());
+    SmartDashboard.putNumber("i", ArmConstants.pidController.getI());
+    SmartDashboard.putNumber("d", ArmConstants.pidController.getD());
+
+
+    SmartDashboard.putNumber("s", ArmConstants.armFeedForward.ks);
+    SmartDashboard.putNumber("g", ArmConstants.armFeedForward.kg);
+    SmartDashboard.putNumber("v", ArmConstants.armFeedForward.kv);
+    SmartDashboard.putNumber("a", ArmConstants.armFeedForward.ka);
 
     CameraServer.startAutomaticCapture(0); // Starts Camera for the Claw
   }

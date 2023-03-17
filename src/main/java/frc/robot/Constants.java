@@ -42,29 +42,30 @@ public final class Constants {
     public static final int[] leftMotorIds = {3,4};
     public static final int[] rightMotorIds = {1,2};
 
-    public static final double P = 2.3697;
-    public static final double I = 0;  
-    public static final double D = 0.22582;
+    public static final double P = 0.27;
+    public static final double I = 2607;  
+    public static final double D = 0.10;
 
     public static final double kS = 0.0000001;
-    public static final double kG = 1.61;
-    public static final double kV = 2.63;
+    public static final double kG = 1.75;
+    public static final double kV = 2.69;
     public static final double kA = 0.15;
 
     public static final double gearRatio = 15.57/1.0;
   }
 
-  public static final PIDController pidController = new PIDController(
-      0.16, 
-      0,
-      0.12 
-    );
+  // public static final PIDController pidController = new PIDController(
+  //     0.27, 
+  //     2607,
+  //     0.10 
+  // );
 
-    public static final ArmFeedforward armFeedForward = new ArmFeedforward(
-      0.0000001, 
-      1.61,
-      2.63
-    );
+  // public static final ArmFeedforward armFeedForward = new ArmFeedforward(
+  //   0.0000001, 
+  //   1.75,
+  //   2.69,
+  //   0.15
+  // );
 
   public static class ArmConstants {
     public static final int ArmRaiserMotorID = 5;
@@ -80,20 +81,39 @@ public final class Constants {
     public static final double armExtensionSpeed = 0.7;
 
     public static final PIDController pidController = new PIDController(
-      0.16, 
-      0,
-      0.12 
+      0.27, 
+      2607,
+      0.10 
     );
 
     public static final ArmFeedforward armFeedForward = new ArmFeedforward(
-      0.5647, 
-      0.7,
-      4 
+      0.0000001, 
+      1.75,
+      2.69,
+      0.15
     );
 
-    public static double kS = 0.5647;
-    public static double kG = 0.7;
-    public static double kV = 4;
+    public static double kS = 0.0000001;
+    public static double kG = 1.75;
+    public static double kV = 2.69;
+    public static double kA = 0.15;
+  }
+
+  public static class TelescopeConstants {
+
+    public static final PIDController telescopePidController = new PIDController (
+      0,
+      0,
+      0
+    );
+
+    public static final ArmFeedforward telescopeFeedForward = new ArmFeedforward(
+      0,
+      0.59,
+      1.54,
+      0.07
+    );
+
   }
 
   public static class IntakeConstants{

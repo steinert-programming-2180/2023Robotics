@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.TelescopeConstants;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax m_armRaiserMotor; 
@@ -132,38 +134,59 @@ public class Arm extends SubsystemBase {
     m_armRaiserMotor.setVoltage(voltage);
   }
 
+  public void setTelescopeVoltage(double voltage) {
+    m_armExtenderMotor.setVoltage(voltage);
+  }
+
   public double getArmPosition(){
     return elevationEncoder.getPosition();
   }
 
+  public double getTelescopePosition() {
+    return extensionEncoder.getPosition();
+  }
+
   public void testInit(){
     elevationEncoder.setPosition(0);
-
+    extensionEncoder.setPosition(0);
   }
 
   // ONLY testing
   public void testPeriodic(){
-    double p = SmartDashboard.getNumber("P", 0.16);
-    // double i = SmartDashboard.getNumber("i", 0);
-    double d = SmartDashboard.getNumber("d", 0.12);
+    double p = ArmConstants.pidController.getP();
+    double i = ArmConstants.pidController.getI();
+    double d = ArmConstants.pidController.getD();
 
-    double s = SmartDashboard.getNumber("s", 0.0000001);
-    double g = SmartDashboard.getNumber("g", 1.61);
-    double v = SmartDashboard.getNumber("v", 2.63);
-    double a = SmartDashboard.getNumber("a", 0.15);
+    // double s = ArmConstants.kS;
+    // double g = ArmConstants.kG;
+    // double v = ArmConstants.kV;
+    // double a = ArmConstants.kA;
+
 
     ArmConstants.pidController.setP(p);
+    ArmConstants.pidController.setI(i);
     ArmConstants.pidController.setD(d);
     ArmConstants.pidController.setSetpoint(54);
 
-    armFeedforward = new ArmFeedforward(s, g, v);
+    TelescopeConstants.telescopePidController.setSetpoint(-24);
+
+    // armFeedforward = new ArmFeedforward(s, g, v, a);
 
     SmartDashboard.putNumber("Arm", getArmPosition());
     SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
 
+    SmartDashboard.putNumber("Telescope", getTelescopePosition());
+    SmartDashboard.putNumber("Telescope Error", TelescopeConstants.telescopePidController.getPositionError());
+
     double feedForwardCalc = ArmConstants.armFeedForward.calculate(getArmPosition(), 0.5);
     double pidCalc = ArmConstants.pidController.calculate(getArmPosition());
     setRaiserVoltage(feedForwardCalc + pidCalc);
+
+    if (ArmConstants.pidController.getPositionError() < 2) {
+      double telescopeFeedForwardCalc = TelescopeConstants.telescopeFeedForward.calculate(getTelescopePosition(), 0.5);
+      setTelescopeVoltage(-telescopeFeedForwardCalc);
+    }
+
   }
 
   @Override
