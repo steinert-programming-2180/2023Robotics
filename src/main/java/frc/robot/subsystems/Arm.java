@@ -168,7 +168,7 @@ public class Arm extends SubsystemBase {
     ArmConstants.pidController.setD(d);
     ArmConstants.pidController.setSetpoint(54);
 
-    TelescopeConstants.telescopePidController.setSetpoint(-24);
+    TelescopeConstants.telescopePidController.setSetpoint(24);
 
     // armFeedforward = new ArmFeedforward(s, g, v, a);
 
@@ -182,10 +182,19 @@ public class Arm extends SubsystemBase {
     double pidCalc = ArmConstants.pidController.calculate(getArmPosition());
     setRaiserVoltage(feedForwardCalc + pidCalc);
 
-    if (ArmConstants.pidController.getPositionError() < 2) {
-      double telescopeFeedForwardCalc = TelescopeConstants.telescopeFeedForward.calculate(getTelescopePosition(), 0.5);
-      setTelescopeVoltage(-telescopeFeedForwardCalc);
-    }
+    double telescopeFeedForwardCalc = TelescopeConstants.telescopeFeedForward.calculate(getTelescopePosition(), 0.5);
+    double telescopePidCalc = TelescopeConstants.telescopePidController.calculate(getTelescopePosition());
+
+    double extensionTemperature = m_armExtenderMotor.getMotorTemperature();
+    double raisingTemperature = m_armRaiserMotor.getMotorTemperature();
+
+    SmartDashboard.putNumber("Ext Motor", extensionTemperature);
+    SmartDashboard.putNumber("Raising Temp", raisingTemperature);
+
+    // if (Math.abs(ArmConstants.pidController.getPositionError()) < 2) {
+    //   setTelescopeVoltage((telescopeFeedForwardCalc + telescopePidCalc)*-2);
+    //   SmartDashboard.putNumber("Telescope Voltage", (telescopeFeedForwardCalc + telescopePidCalc)*2);
+    // }
 
   }
 

@@ -109,9 +109,9 @@ public final class Constants {
 
     public static final ArmFeedforward telescopeFeedForward = new ArmFeedforward(
       0,
-      0.59,
+      0.35,
       1.54,
-      0.07
+      0.04
     );
 
   }
@@ -120,8 +120,8 @@ public final class Constants {
     public static final int intakeMotorID = 7;
     public static final double intakeSpeed = 0.65;
 
-    public static final int solenoidOpenPort = 7;
-    public static final int solenoidClosePort = 6;
+    public static final int solenoidOpenPort = 3;
+    public static final int solenoidClosePort = 2;
   }
 
   public static class LimelightConstants {
