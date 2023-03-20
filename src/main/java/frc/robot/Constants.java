@@ -30,8 +30,8 @@ public final class Constants {
   }
 
   public static class LEDConstants{
-    public static final int yellowPort = 0;
-    public static final int purplePort = 15;
+    public static final int yellowPort = 15;
+    public static final int purplePort = 0;
   }
 
   public static class DriveTrainConstants {
