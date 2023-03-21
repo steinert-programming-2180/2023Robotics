@@ -68,7 +68,7 @@ public class RobotContainer {
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
   private final RetractArm retractArm = new RetractArm(arm);
-  private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
+  // private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -142,8 +142,9 @@ public class RobotContainer {
     JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
     JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
     JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
-    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
-    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
+    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
+    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
+    JoystickButton XboxLeftStickButton = new JoystickButton(operatorController, XboxController.Button.kLeftStick.value);
 
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -182,14 +183,14 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    
-
-    XboxRightPad.toggleOnTrue(
+    XboxLeftPad.onTrue(
       new RunCommand(
-        () -> intake.openIntake(),
-        intake 
+      () -> intake.openIntake(),
+      intake
       )
-    ).toggleOnFalse(
+    );
+
+    XboxRightPad.onTrue(
       new RunCommand(
         () -> intake.closeIntake(),
         intake 
@@ -199,16 +200,16 @@ public class RobotContainer {
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
 
-    XboxButtonMap.onTrue(brakeOn);
+    XboxButtonPause.onTrue(brakeOn);
 
     // Auto Arm Controls
     XboxLeftBumper.onTrue(
       new RaiseArmToLowerStand(arm, ArmConstants.midFloorArmEncoderValue)
     );
-    XboxButtonPause.onTrue(
+    XboxButtonMap.onTrue(
       new RaiseArmToLowerStand(arm, ArmConstants.substationArmEncoderValue)
     );
-    XboxLeftPad.onTrue(
+    XboxLeftStickButton.onTrue(
       new RaiseArmToLowerStand(arm, ArmConstants.bottomFloorArmEncoderValue)
     );
     XboxRightBumper.onTrue(
@@ -224,7 +225,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
     return new SequentialCommandGroup(
-      new RaiseArmToLowerStand(arm),
+      new RaiseArmToLowerStand(arm, 25),
       new IntakeReverse(intake, .05)
     );
     // return new DriveForward(drivetrain, 12);

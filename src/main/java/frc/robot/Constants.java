@@ -100,10 +100,10 @@ public final class Constants {
     public static double kV = 2.69;
     public static double kA = 0.15;
 
-    public static double substationArmEncoderValue = 42;
-    public static double highFloorArmEncoderValue = 55;
-    public static double midFloorArmEncoderValue = 35;
-    public static double bottomFloorArmEncoderValue = 12;
+    public static double substationArmEncoderValue = 55;
+    public static double highFloorArmEncoderValue = 60;
+    public static double midFloorArmEncoderValue = 50;
+    public static double bottomFloorArmEncoderValue = 15;
   }
 
   public static class TelescopeConstants {
@@ -126,6 +126,7 @@ public final class Constants {
   public static class IntakeConstants{
     public static final int intakeMotorID = 7;
     public static final double intakeSpeed = 0.65;
+    public static final double idleSpeed = 0.1;
 
     public static final int solenoidOpenPort = 3;
     public static final int solenoidClosePort = 2;

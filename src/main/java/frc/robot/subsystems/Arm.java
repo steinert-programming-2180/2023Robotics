@@ -68,7 +68,8 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isOverRaising() {
-    return raisingLimitSwitch.get();
+    // return raisingLimitSwitch.get();
+    return false;
   }
 
   public boolean isOverLowering() {
@@ -215,6 +216,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Ext Motor", extensionTemperature);
     SmartDashboard.putNumber("Raising Temp", raisingTemperature);
     SmartDashboard.putNumber("Arm Pos", armPosition);
+    SmartDashboard.putBoolean("Limit Switch", raisingLimitSwitch.get());
   }
 
   @Override
