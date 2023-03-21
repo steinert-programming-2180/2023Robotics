@@ -32,11 +32,13 @@ public class Arm extends SubsystemBase {
   private RelativeEncoder extensionEncoder;
   private ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);
 
+  private double counterArmTorqueSpeed = ArmConstants.counterArmTorqueSpeed;
+
 
   /** Creates a new ExampleSubsystem. */
   public Arm() {
     // TODO: make mechanical mount these on there
-    // raisingLimitSwitch = new DigitalInput(ArmConstants.UpperLimitSwitchID);
+    raisingLimitSwitch = new DigitalInput(ArmConstants.UpperLimitSwitchID);
     // loweringLimitSwitch = new DigitalInput(ArmConstants.LowerLimitSwitchID);
     // extensionLimitSwitch = new DigitalInput(ArmConstants.ExtensionLimitSwitchID);
     // retractionLimitSwitch = new DigitalInput(ArmConstants.RetractionLimitSwitchID);
@@ -51,6 +53,8 @@ public class Arm extends SubsystemBase {
   
     elevationEncoder = m_armRaiserMotor.getEncoder();
     extensionEncoder = m_armExtenderMotor.getEncoder();
+    
+    resetEncoders();
   }
 
   public boolean isOverExtending() {
@@ -64,8 +68,7 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isOverRaising() {
-    // return raisingLimitSwitch.get();
-    return false;
+    return raisingLimitSwitch.get();
   }
 
   public boolean isOverLowering() {
@@ -85,22 +88,22 @@ public class Arm extends SubsystemBase {
 
 
   public void raiseArm() {
-    double armSpeed = isOverRaising() ? 0:ArmConstants.armLiftingSpeed;
+    double armSpeed = isOverRaising() ? getCounterTorqueSpeed():ArmConstants.armLiftingSpeed;
     m_armRaiserMotor.set(armSpeed);
   }
 
   public void lowerArm() {
-    double armSpeed = isOverLowering() ? 0:ArmConstants.armFallingSpeed;
+    double armSpeed = isOverLowering() ? getCounterTorqueSpeed():ArmConstants.armFallingSpeed;
     m_armRaiserMotor.set(-armSpeed);
   }
 
   public void extendArm() {
-    double speed = isOverExtending() ? 0:ArmConstants.armExtensionSpeed;
+    double speed = isOverExtending() ? getCounterTorqueSpeed():ArmConstants.armExtensionSpeed;
     m_armExtenderMotor.set(-speed);
   }
 
   public void retractArm() {
-    double speed = isOverRetracting() ? 0:ArmConstants.armExtensionSpeed;
+    double speed = isOverRetracting() ? getCounterTorqueSpeed():ArmConstants.armExtensionSpeed;
     m_armExtenderMotor.set(speed);
   }
 
@@ -113,8 +116,12 @@ public class Arm extends SubsystemBase {
     return Units.lbsToKilograms(20) * 9.81 * Units.inchesToMeters(46);
   }
 
+  public double getCounterTorqueSpeed(){
+    return ArmConstants.counterArmTorqueSpeed;
+  }
+
   public void counterTorque(){
-    m_armRaiserMotor.set(0.05);
+    m_armRaiserMotor.set(getCounterTorqueSpeed());
   }
 
   public void extendByPins(int amountOfPins){
