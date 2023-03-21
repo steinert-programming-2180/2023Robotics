@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BrakeOff;
 import frc.robot.commands.BrakeOn;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -140,8 +142,8 @@ public class RobotContainer {
     JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
     JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
     JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
-    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kStart.value);
-    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kBack.value);
+    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
+    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
 
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -180,25 +182,38 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    // XboxLeftPad.onTrue(brakeOn).onFalse(brakeOff);
-    XboxLeftPad.whileTrue(
+    
+
+    XboxRightPad.toggleOnTrue(
+      new RunCommand(
+        () -> intake.openIntake(),
+        intake 
+      )
+    ).toggleOnFalse(
       new RunCommand(
         () -> intake.closeIntake(),
-        intake
+        intake 
       )
-    );
-
-    XboxRightPad.whileTrue(
-      new RunCommand(
-        () -> intake.openIntake(), 
-        intake)
     );
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
 
-    XboxLeftBumper.whileTrue(brakeOff);
-    XboxRightBumper.whileTrue(brakeOn);
+    XboxButtonMap.onTrue(brakeOn);
+
+    // Auto Arm Controls
+    XboxLeftBumper.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.midFloorArmEncoderValue)
+    );
+    XboxButtonPause.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.substationArmEncoderValue)
+    );
+    XboxLeftPad.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.bottomFloorArmEncoderValue)
+    );
+    XboxRightBumper.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.highFloorArmEncoderValue)
+    );
   }
 
   /**

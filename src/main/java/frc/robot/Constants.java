@@ -97,6 +97,11 @@ public final class Constants {
     public static double kG = 1.75;
     public static double kV = 2.69;
     public static double kA = 0.15;
+
+    public static double substationArmEncoderValue = 42;
+    public static double highFloorArmEncoderValue = 55;
+    public static double midFloorArmEncoderValue = 35;
+    public static double bottomFloorArmEncoderValue = 12;
   }
 
   public static class TelescopeConstants {

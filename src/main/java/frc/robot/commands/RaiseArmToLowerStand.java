@@ -22,8 +22,12 @@ public class RaiseArmToLowerStand extends CommandBase {
    * @param arm The subsystem used by this command.
    */
   public RaiseArmToLowerStand(Arm arm) {
+    this(arm, 25);
+  }
+
+  public RaiseArmToLowerStand(Arm arm, double setpoint) {
     this.arm = arm;
-    ArmConstants.pidController.setSetpoint(25);
+    ArmConstants.pidController.setSetpoint(setpoint);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
   }
