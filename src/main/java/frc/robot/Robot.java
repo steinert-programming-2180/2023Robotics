@@ -142,6 +142,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     USensorPlace = USensor.get();
     SmartDashboard.putNumber("USensor", USensorPlace);
+ 
+    if(USensorPlace <= 0.2)
+    {
+
+    }
   }
 
   @Override
