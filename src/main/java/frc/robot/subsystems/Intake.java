@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeStop() {
-    clawMotor.set(0);
+    clawMotor.set(IntakeConstants.idleSpeed);
   }
   
   // TODO: how are we sensing if the claw has grabbed something? Encoders? Test out encoders.
@@ -60,7 +60,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Intake Temp", clawMotor.getMotorTemperature());
-    intakeOn(0.1);
   }
 
   @Override

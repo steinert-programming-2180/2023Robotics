@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // m_robotContainer.drivetrain.resetSensors();
     // pidController.setSetpoint(0.12);
@@ -122,7 +123,12 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     limelight = new Limelight();
 
+<<<<<<< HEAD
     USensor = new AnalogPotentiometer(0);
+=======
+    // TODO: remove this after testing
+    m_robotContainer.arm.resetEncoders();
+>>>>>>> 761b3217ee316686a43d2ede970e5ccbdb46567b
     
     m_robotContainer.drivetrain.arcadeDrive(0, 0);
     m_robotContainer.setupDriveTrainCommand();

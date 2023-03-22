@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BrakeOff;
 import frc.robot.commands.BrakeOn;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -66,7 +68,7 @@ public class RobotContainer {
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
   private final RetractArm retractArm = new RetractArm(arm);
-  private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
+  // private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -140,8 +142,9 @@ public class RobotContainer {
     JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
     JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
     JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
-    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kStart.value);
-    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kBack.value);
+    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
+    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
+    JoystickButton XboxLeftStickButton = new JoystickButton(operatorController, XboxController.Button.kLeftStick.value);
 
     JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
     JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -180,25 +183,38 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    // XboxLeftPad.onTrue(brakeOn).onFalse(brakeOff);
-    XboxLeftPad.whileTrue(
+    XboxLeftPad.onTrue(
       new RunCommand(
-        () -> intake.closeIntake(),
-        intake
+      () -> intake.openIntake(),
+      intake
       )
     );
 
-    XboxRightPad.whileTrue(
+    XboxRightPad.onTrue(
       new RunCommand(
-        () -> intake.openIntake(), 
-        intake)
+        () -> intake.closeIntake(),
+        intake 
+      )
     );
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
 
-    XboxLeftBumper.whileTrue(brakeOff);
-    XboxRightBumper.whileTrue(brakeOn);
+    XboxButtonPause.onTrue(brakeOn);
+
+    // Auto Arm Controls
+    XboxLeftBumper.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.midFloorArmEncoderValue)
+    );
+    XboxButtonMap.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.substationArmEncoderValue)
+    );
+    XboxLeftStickButton.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.bottomFloorArmEncoderValue)
+    );
+    XboxRightBumper.onTrue(
+      new RaiseArmToLowerStand(arm, ArmConstants.highFloorArmEncoderValue)
+    );
   }
 
   /**
@@ -209,7 +225,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
     return new SequentialCommandGroup(
-      new RaiseArmToLowerStand(arm),
+      new RaiseArmToLowerStand(arm, 25),
       new IntakeReverse(intake, .05)
     );
     // return new DriveForward(drivetrain, 12);

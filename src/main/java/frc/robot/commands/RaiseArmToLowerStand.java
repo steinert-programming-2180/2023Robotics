@@ -15,15 +15,17 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 public class RaiseArmToLowerStand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Arm arm;
+  double setpoint = 0;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param arm The subsystem used by this command.
-   */
-  public RaiseArmToLowerStand(Arm arm) {
+*/
+
+  public RaiseArmToLowerStand(Arm arm, double setpoint) {
     this.arm = arm;
-    ArmConstants.pidController.setSetpoint(25);
+    this.setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
   }
@@ -31,7 +33,7 @@ public class RaiseArmToLowerStand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.resetEncoders();
+    ArmConstants.pidController.setSetpoint(setpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,6 +41,7 @@ public class RaiseArmToLowerStand extends CommandBase {
   public void execute() {
     SmartDashboard.putNumber("Arm", arm.getArmPosition());
     SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
+    SmartDashboard.putBoolean("Arm Raising FInished", isFinished());
 
 
     double feedForwardCalc = ArmConstants.armFeedForward.calculate(arm.getArmPosition(), 0.5);

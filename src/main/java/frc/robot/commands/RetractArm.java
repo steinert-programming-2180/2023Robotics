@@ -19,8 +19,9 @@ public class RetractArm extends CommandBase {
    */
   public RetractArm(Arm arm) {
     this.arm = arm;
+    // TODO: figure out better way than commenting out 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arm);
+    // addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.

@@ -71,7 +71,7 @@ public final class Constants {
     public static final int ArmRaiserMotorID = 5;
     public static final int ArmExtendMotorID = 6;
 
-    public static final int UpperLimitSwitchID = 1;
+    public static final int UpperLimitSwitchID = 0;
     public static final int LowerLimitSwitchID = 2;
     public static final int ExtensionLimitSwitchID = 3;
     public static final int RetractionLimitSwitchID = 4;
@@ -79,6 +79,8 @@ public final class Constants {
     public static final double armLiftingSpeed = 0.65; 
     public static final double armFallingSpeed = 0.15;
     public static final double armExtensionSpeed = 0.7;
+
+    public static final double counterArmTorqueSpeed = 0.05;
 
     public static final PIDController pidController = new PIDController(
       0.27, 
@@ -97,6 +99,11 @@ public final class Constants {
     public static double kG = 1.75;
     public static double kV = 2.69;
     public static double kA = 0.15;
+
+    public static double substationArmEncoderValue = 55;
+    public static double highFloorArmEncoderValue = 60;
+    public static double midFloorArmEncoderValue = 50;
+    public static double bottomFloorArmEncoderValue = 15;
   }
 
   public static class TelescopeConstants {
@@ -119,6 +126,7 @@ public final class Constants {
   public static class IntakeConstants{
     public static final int intakeMotorID = 7;
     public static final double intakeSpeed = 0.65;
+    public static final double idleSpeed = 0.1;
 
     public static final int solenoidOpenPort = 3;
     public static final int solenoidClosePort = 2;
