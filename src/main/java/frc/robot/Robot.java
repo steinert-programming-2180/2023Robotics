@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -29,6 +32,9 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   PIDController pidController = new PIDController(DriveTrainConstants.P, DriveTrainConstants.I, DriveTrainConstants.D);
   PIDCommand pidCommand;
+
+  private AnalogPotentiometer USensor;
+  double USensorPlace;
 
   PneumaticHub pneumaticHub;
   Compressor compressor;
@@ -115,6 +121,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     limelight = new Limelight();
+
+    USensor = new AnalogPotentiometer(0);
     
     m_robotContainer.drivetrain.arcadeDrive(0, 0);
     m_robotContainer.setupDriveTrainCommand();
@@ -132,7 +140,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    USensorPlace = USensor.get();
+    SmartDashboard.putNumber("USensor", USensorPlace);
   }
 
   @Override
