@@ -20,6 +20,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.PneumaticConstants;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Intake;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -30,11 +31,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Limelight limelight;
   private RobotContainer m_robotContainer;
+  private Intake intake;
   PIDController pidController = new PIDController(DriveTrainConstants.P, DriveTrainConstants.I, DriveTrainConstants.D);
   PIDCommand pidCommand;
-
-  private AnalogPotentiometer USensor;
-  double USensorPlace;
 
   PneumaticHub pneumaticHub;
   Compressor compressor;
@@ -52,6 +51,7 @@ public class Robot extends TimedRobot {
     pneumaticHub = new PneumaticHub();
     compressor = new Compressor(1, PneumaticConstants.pneumaticsModuleType);
     compressor.enableAnalog(PneumaticConstants.idealPSI-1, PneumaticConstants.idealPSI);
+    intake = new Intake();
 
     SmartDashboard.putNumber("p", ArmConstants.pidController.getP());
     SmartDashboard.putNumber("i", ArmConstants.pidController.getI());
@@ -123,14 +123,10 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     limelight = new Limelight();
 
-<<<<<<< HEAD
-    USensor = new AnalogPotentiometer(0);
-=======
     // TODO: remove this after testing
     m_robotContainer.arm.resetEncoders();
->>>>>>> 761b3217ee316686a43d2ede970e5ccbdb46567b
     
-    m_robotContainer.drivetrain.arcadeDrive(0, 0);
+    m_robotContainer.drivetrain.arcadeDrive(-0, 0);
     m_robotContainer.setupDriveTrainCommand();
     m_robotContainer.intake.closeIntake();
 
@@ -146,13 +142,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    USensorPlace = USensor.get();
-    SmartDashboard.putNumber("USensor", USensorPlace);
- 
-    if(USensorPlace <= 0.2)
-    {
 
-    }
   }
 
   @Override

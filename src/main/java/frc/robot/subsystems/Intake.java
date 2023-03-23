@@ -11,11 +11,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PneumaticConstants;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 public class Intake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   CANSparkMax clawMotor;
   DoubleSolenoid intakeSolenoid;
+  // private AnalogPotentiometer USensor;
+  // double USensorPlace;
 
   public Intake() {
     clawMotor = new CANSparkMax(IntakeConstants.intakeMotorID, MotorType.kBrushless);
@@ -24,6 +27,8 @@ public class Intake extends SubsystemBase {
       IntakeConstants.solenoidOpenPort,
       IntakeConstants.solenoidClosePort
     );
+    // USensor = new AnalogPotentiometer(0);
+    // USensorPlace = USensor.get();
   }
 
   public void closeIntake(){
@@ -33,6 +38,14 @@ public class Intake extends SubsystemBase {
   public void openIntake(){
     intakeSolenoid.set(Value.kForward);
   }
+
+//   public void autoIntake(){
+//     if(USensorPlace <= 0.2)
+//     {
+//     // closeIntake();
+//     }
+//   SmartDashboard.putBoolean("AutoSensor", USensorPlace <= 0.2);
+// }
 
   public void IntakeRevese() {
     IntakeRevese(-IntakeConstants.intakeSpeed);
@@ -60,6 +73,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Intake Temp", clawMotor.getMotorTemperature());
+    // autoIntake();
   }
 
   @Override
