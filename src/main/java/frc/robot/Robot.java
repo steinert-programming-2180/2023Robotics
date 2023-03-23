@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,6 +20,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.PneumaticConstants;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Intake;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -27,6 +31,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private Limelight limelight;
   private RobotContainer m_robotContainer;
+  private Intake intake;
   PIDController pidController = new PIDController(DriveTrainConstants.P, DriveTrainConstants.I, DriveTrainConstants.D);
   PIDCommand pidCommand;
 
@@ -46,6 +51,7 @@ public class Robot extends TimedRobot {
     pneumaticHub = new PneumaticHub();
     compressor = new Compressor(1, PneumaticConstants.pneumaticsModuleType);
     compressor.enableAnalog(PneumaticConstants.idealPSI-1, PneumaticConstants.idealPSI);
+    intake = new Intake();
 
     SmartDashboard.putNumber("p", ArmConstants.pidController.getP());
     SmartDashboard.putNumber("i", ArmConstants.pidController.getI());
@@ -120,7 +126,7 @@ public class Robot extends TimedRobot {
     // TODO: remove this after testing
     m_robotContainer.arm.resetEncoders();
     
-    m_robotContainer.drivetrain.arcadeDrive(0, 0);
+    m_robotContainer.drivetrain.arcadeDrive(-0, 0);
     m_robotContainer.setupDriveTrainCommand();
     m_robotContainer.intake.closeIntake();
 
@@ -136,7 +142,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+
   }
 
   @Override

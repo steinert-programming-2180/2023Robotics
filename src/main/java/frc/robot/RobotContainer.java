@@ -113,8 +113,8 @@ public class RobotContainer {
   private CommandBase getTankDriveCommand() {
     return new RunCommand(
         () -> drivetrain.move(
-            leftJoystick.getY(),
-            rightJoystick.getY()),
+            Math.abs(leftJoystick.getY()) <= .0016 ? 0 : leftJoystick.getY(),
+            Math.abs(rightJoystick.getY()) <= .0016 ? 0 : rightJoystick.getY()),
         drivetrain);
   }
 
