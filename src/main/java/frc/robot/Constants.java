@@ -20,7 +20,7 @@ public final class Constants {
   public static class PneumaticConstants{
     public static final PneumaticsModuleType pneumaticsModuleType = PneumaticsModuleType.REVPH;
     public static final int pneumaticHubID = 9;
-    public static final int idealPSI = 100;
+    public static final int idealPSI = 105;
   }
 
   public static class OperatorConstants {
@@ -100,10 +100,10 @@ public final class Constants {
     public static double kV = 2.69;
     public static double kA = 0.15;
 
-    public static double substationArmEncoderValue = 55;
+    public static double substationArmEncoderValue = 51.5;
     public static double highFloorArmEncoderValue = 60;
     public static double midFloorArmEncoderValue = 50;
-    public static double bottomFloorArmEncoderValue = 15;
+    public static double bottomFloorArmEncoderValue = 18.5;
   }
 
   public static class TelescopeConstants {
