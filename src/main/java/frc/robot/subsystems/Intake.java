@@ -17,17 +17,18 @@ public class Intake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   CANSparkMax clawMotor;
   DoubleSolenoid intakeSolenoid;
-  // private AnalogPotentiometer USensor;
-  // double USensorPlace;
+  private AnalogPotentiometer USensor;
+  double USensorPlace;
 
   public Intake() {
     clawMotor = new CANSparkMax(IntakeConstants.intakeMotorID, MotorType.kBrushless);
+    clawMotor.setSmartCurrentLimit(60, 100);
     intakeSolenoid = new DoubleSolenoid(
       PneumaticConstants.pneumaticsModuleType, 
       IntakeConstants.solenoidOpenPort,
       IntakeConstants.solenoidClosePort
     );
-    // USensor = new AnalogPotentiometer(0);
+    USensor = new AnalogPotentiometer(0);
     // USensorPlace = USensor.get();
   }
 
@@ -39,13 +40,14 @@ public class Intake extends SubsystemBase {
     intakeSolenoid.set(Value.kForward);
   }
 
-//   public void autoIntake(){
-//     if(USensorPlace <= 0.2)
-//     {
-//     // closeIntake();
-//     }
-//   SmartDashboard.putBoolean("AutoSensor", USensorPlace <= 0.2);
-// }
+  public void autoIntake(){
+    // if(USensorPlace <= 0.2)
+    // {
+    // // closeIntake();
+    // }
+  SmartDashboard.putBoolean("AutoSensor", USensor.get() <= 0.2);
+  SmartDashboard.putNumber("USensor", USensor.get());
+}
 
   public void IntakeRevese() {
     IntakeRevese(-IntakeConstants.intakeSpeed);
@@ -73,7 +75,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Intake Temp", clawMotor.getMotorTemperature());
-    // autoIntake();
+    autoIntake();
   }
 
   @Override

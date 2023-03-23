@@ -100,7 +100,7 @@ public final class Constants {
     public static double kV = 2.69;
     public static double kA = 0.15;
 
-    public static double substationArmEncoderValue = 51.5;
+    public static double substationArmEncoderValue = 52;
     public static double highFloorArmEncoderValue = 60;
     public static double midFloorArmEncoderValue = 50;
     public static double bottomFloorArmEncoderValue = 18.5;
