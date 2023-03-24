@@ -54,6 +54,8 @@ public class Arm extends SubsystemBase {
     elevationEncoder = m_armRaiserMotor.getEncoder();
     extensionEncoder = m_armExtenderMotor.getEncoder();
     
+    m_armExtenderMotor.setSmartCurrentLimit(40, 40);
+    
     resetEncoders();
   }
 

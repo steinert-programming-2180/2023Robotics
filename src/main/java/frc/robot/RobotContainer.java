@@ -11,7 +11,7 @@ import frc.robot.commands.Arm.ExtendArm;
 import frc.robot.commands.Arm.ExtendArmByPins;
 import frc.robot.commands.Arm.LowerArm;
 import frc.robot.commands.Arm.RaiseArm;
-import frc.robot.commands.Arm.RaiseArmToLowerStand;
+import frc.robot.commands.Arm.RaiseArmToSetpoint;
 import frc.robot.commands.Arm.RetractArm;
 import frc.robot.commands.DriveTrain.BrakeOff;
 import frc.robot.commands.DriveTrain.BrakeOn;
@@ -61,6 +61,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  public DriveTrain drivetrain = new DriveTrain();
+
   public final Arm arm = new Arm();
   public final Intake intake = new Intake();
   private final Brake brake = new Brake();
@@ -70,7 +72,6 @@ public class RobotContainer {
   private final LowerArm lowerArm = new LowerArm(arm);
   private final ExtendArm extendArm = new ExtendArm(arm);
   private final RetractArm retractArm = new RetractArm(arm);
-  // private final RaiseArmToLowerStand raiseArmToLowerStand = new RaiseArmToLowerStand(arm);
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -79,30 +80,37 @@ public class RobotContainer {
 
   private final BrakeOn brakeOn = new BrakeOn(brake);
   private final BrakeOff brakeOff = new BrakeOff(brake);
+  
+  // Joysticks and Buttons
+  Joystick leftJoystick = new Joystick(OperatorConstants.leftJoystickPort);
+  Joystick rightJoystick = new Joystick(OperatorConstants.rightJoystickPort);
+  XboxController operatorController = new XboxController(OperatorConstants.operatorControllerPort);
 
-  private final ExtendArmByPins extendArmByPins = new ExtendArmByPins(arm, 36);
+  JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
+  JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
+  JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
+  JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
+  JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
+  JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
+  JoystickButton XboxLeftStickButton = new JoystickButton(operatorController, XboxController.Button.kLeftStick.value);
 
-  Joystick leftJoystick;
-  Joystick rightJoystick;
-  XboxController operatorController;
+  JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
+  JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
 
-  public DriveTrain drivetrain;
+  JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
+  JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
+
+  JoystickButton rightButtonThree = new JoystickButton(rightJoystick, 3);
+  JoystickButton leftButtonThree = new JoystickButton(leftJoystick, 3);
+
+  // private final ExtendArmByPins extendArmByPins = new ExtendArmByPins(arm, 36);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    drivetrain = new DriveTrain();
-    setupIO();
     // setupDriveTrainCommand();
     configureBindings();
-  }
-
-  /** Instantiate Joysticks and Controllers */
-  private void setupIO() {
-    leftJoystick = new Joystick(OperatorConstants.leftJoystickPort);
-    rightJoystick = new Joystick(OperatorConstants.rightJoystickPort);
-    operatorController = new XboxController(OperatorConstants.operatorControllerPort);
   }
 
   /** Create Default Command so Joysticks ALWAYS control drivetrain */
@@ -142,29 +150,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
-    JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
-    JoystickButton XboxButtonX = new JoystickButton(operatorController, XboxController.Button.kX.value);
-    JoystickButton XboxButtonY = new JoystickButton(operatorController, XboxController.Button.kY.value);
-    JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
-    JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
-    JoystickButton XboxLeftStickButton = new JoystickButton(operatorController, XboxController.Button.kLeftStick.value);
-
-    JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
-    JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
-
-    JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
-    JoystickButton rightTrigger = new JoystickButton(rightJoystick, 1);
-
-    JoystickButton rightButtonThree = new JoystickButton(rightJoystick, 3);
-    JoystickButton leftButtonThree = new JoystickButton(leftJoystick, 3);
-
     rightButtonThree.and(leftButtonThree).whileTrue(new SetSpeedLimit(0.15, drivetrain));
 
     rightButtonThree.or(leftButtonThree).whileTrue(
-        new RunCommand(
-            () -> drivetrain.tankDrive(Math.min(leftJoystick.getY(), rightJoystick.getY()), 1.05*Math.min(leftJoystick.getY(), rightJoystick.getY())),
-            drivetrain));
+      new RunCommand(
+        () -> drivetrain.tankDrive(rightJoystick.getY(), 1.05*rightJoystick.getY()),
+        drivetrain
+      )
+    );
 
     Trigger XboxUpPad = new Trigger(() -> operatorController.getPOV() == 0);
     Trigger XboxRightPad = new Trigger(() -> operatorController.getPOV() == 90);
@@ -197,16 +190,16 @@ public class RobotContainer {
 
     // Auto Arm Controls
     XboxLeftBumper.onTrue(
-      new RaiseArmToLowerStand(arm, ArmConstants.midFloorArmEncoderValue)
+      new RaiseArmToSetpoint(arm, ArmConstants.midFloorArmEncoderValue)
     );
     XboxButtonMap.onTrue(
-      new RaiseArmToLowerStand(arm, ArmConstants.substationArmEncoderValue)
+      new RaiseArmToSetpoint(arm, ArmConstants.substationArmEncoderValue)
     );
     XboxLeftStickButton.onTrue(
-      new RaiseArmToLowerStand(arm, ArmConstants.bottomFloorArmEncoderValue)
+      new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue)
     );
     XboxRightBumper.onTrue(
-      new RaiseArmToLowerStand(arm, ArmConstants.highFloorArmEncoderValue)
+      new RaiseArmToSetpoint(arm, ArmConstants.highFloorArmEncoderValue)
     );
   }
 
@@ -218,32 +211,41 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
     return new SequentialCommandGroup(
-      new RaiseArmToLowerStand(arm, 25),
+      new RaiseArmToSetpoint(arm, 25),
       new IntakeReverse(intake, .05)
     );
   }
 
   public Command newAuto(){
     arm.resetEncoders();
-    Command raiseToHighStand = new RaiseArmToLowerStand(arm, 67);
+    
+    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 67);
     Command extendToHigh = new TimedCommand(extendArm, 1.6);
-    Command raiseAboveStand = new RaiseArmToLowerStand(arm, 68);
+    Command raiseAboveStand = new RaiseArmToSetpoint(arm, arm.getArmPosition()+2);
+    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue);
     Command retractArm = new TimedCommand(
       new RunCommand(
         () -> arm.retractArm(),
         arm
       ),
-    1.55);
-    Command driveBackOut = new TimedCommand(brakeOff, 0);
+    1.4);
+    Command driveBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.75, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      4
+    );
 
 
     return new SequentialCommandGroup(
       raiseToHighStand,
       extendToHigh,
-      openIntake,
-      raiseAboveStand,
-      closeIntake,
-      retractArm
+      new OpenIntake(intake),
+      retractArm,
+      new CloseIntake(intake),
+      goToFloor 
     );
   }
 }

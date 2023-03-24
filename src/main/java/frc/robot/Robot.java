@@ -115,11 +115,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     limelight = new Limelight();
+    m_robotContainer.setupDriveTrainCommand();
 
     // TODO: remove this after testing
-    m_robotContainer.drivetrain.arcadeDrive(0, 0);
-    m_robotContainer.setupDriveTrainCommand();
-    m_robotContainer.intake.closeIntake();
+    // m_robotContainer.drivetrain.arcadeDrive(0, 0);
+    // m_robotContainer.intake.closeIntake();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

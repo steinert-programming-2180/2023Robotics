@@ -100,6 +100,8 @@ public class DriveTrain extends SubsystemBase {
   
   /** This function drives the robot using whatever method the driver is most comfortable with.
    * This should NOT be used with anything other than user inputs.
+   * 
+   * Positive speed is backwards; Negative speed is forwards
    */
   public void move(double leftSpeed, double rightSpeed) {
     difDrive.tankDrive(leftSpeed, rightSpeed, true);

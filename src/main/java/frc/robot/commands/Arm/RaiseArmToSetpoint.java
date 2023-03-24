@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 
 /** An example command that uses an example subsystem. */
-public class RaiseArmToLowerStand extends CommandBase {
+public class RaiseArmToSetpoint extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Arm arm;
   double setpoint = 0;
@@ -23,7 +23,7 @@ public class RaiseArmToLowerStand extends CommandBase {
    * @param arm The subsystem used by this command.
 */
 
-  public RaiseArmToLowerStand(Arm arm, double setpoint) {
+  public RaiseArmToSetpoint(Arm arm, double setpoint) {
     this.arm = arm;
     this.setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
