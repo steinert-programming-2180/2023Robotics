@@ -34,6 +34,7 @@ public class RaiseArmToLowerStand extends CommandBase {
   @Override
   public void initialize() {
     ArmConstants.pidController.setSetpoint(setpoint);
+    ArmConstants.pidController.setTolerance(1.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

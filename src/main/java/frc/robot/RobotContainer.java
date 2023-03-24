@@ -249,4 +249,41 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_exampleSubsystem);
   }
+
+  public Command newAuto(){
+    arm.resetEncoders();
+    Command goToHighStand = new RaiseArmToLowerStand(arm, 67);
+    Command extendToHigh = new TimedCommand(extendArm, 1.6);
+    Command openIntake = new TimedCommand(new RunCommand(
+      () -> intake.openIntake(),
+      intake 
+    ),
+    0.1);
+    Command closeIntake = new RunCommand(
+        () -> intake.closeIntake(),
+        intake 
+    );
+    Command goOutOfStand = new RaiseArmToLowerStand(arm, 68);
+    Command closeClaw = new TimedCommand(new RunCommand(
+      () -> intake.closeIntake(),
+      intake 
+    ), 0.1);
+    Command retractArm = new TimedCommand(
+      new RunCommand(
+        () -> arm.retractArm(),
+        arm
+      ),
+    1.55);
+    Command driveBackOut = new TimedCommand(brakeOff, 0);
+
+
+    return new SequentialCommandGroup(
+      goToHighStand,
+      extendToHigh,
+      openIntake,
+      goOutOfStand,
+      closeClaw,
+      retractArm
+    );
+  }
 }

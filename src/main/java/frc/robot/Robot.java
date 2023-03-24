@@ -47,15 +47,15 @@ public class Robot extends TimedRobot {
     compressor = new Compressor(1, PneumaticConstants.pneumaticsModuleType);
     compressor.enableAnalog(PneumaticConstants.idealPSI-1, PneumaticConstants.idealPSI);
 
-    SmartDashboard.putNumber("p", ArmConstants.pidController.getP());
-    SmartDashboard.putNumber("i", ArmConstants.pidController.getI());
-    SmartDashboard.putNumber("d", ArmConstants.pidController.getD());
+    // SmartDashboard.putNumber("p", ArmConstants.pidController.getP());
+    // SmartDashboard.putNumber("i", ArmConstants.pidController.getI());
+    // SmartDashboard.putNumber("d", ArmConstants.pidController.getD());
 
 
-    SmartDashboard.putNumber("s", ArmConstants.armFeedForward.ks);
-    SmartDashboard.putNumber("g", ArmConstants.armFeedForward.kg);
-    SmartDashboard.putNumber("v", ArmConstants.armFeedForward.kv);
-    SmartDashboard.putNumber("a", ArmConstants.armFeedForward.ka);
+    // SmartDashboard.putNumber("s", ArmConstants.armFeedForward.ks);
+    // SmartDashboard.putNumber("g", ArmConstants.armFeedForward.kg);
+    // SmartDashboard.putNumber("v", ArmConstants.armFeedForward.kv);
+    // SmartDashboard.putNumber("a", ArmConstants.armFeedForward.ka);
 
     CameraServer.startAutomaticCapture(0); // Starts Camera for the Claw
   }
@@ -86,8 +86,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.newAuto();
     // m_robotContainer.drivetrain.resetSensors();
     // pidController.setSetpoint(0.12);
 
@@ -118,8 +117,6 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     // TODO: remove this after testing
-    m_robotContainer.arm.resetEncoders();
-    
     m_robotContainer.drivetrain.arcadeDrive(0, 0);
     m_robotContainer.setupDriveTrainCommand();
     m_robotContainer.intake.closeIntake();

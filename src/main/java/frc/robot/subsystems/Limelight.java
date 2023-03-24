@@ -127,9 +127,9 @@ public class Limelight extends SubsystemBase {
      */
     public void putItems() {
 
-        SmartDashboard.putBoolean("Has Target?", hasTarget());
-        SmartDashboard.putBoolean("Is Tracking?", isTracking());
-        SmartDashboard.putNumber("Cam Mode", getCameraMode());
+        // SmartDashboard.putBoolean("Has Target?", hasTarget());
+        // SmartDashboard.putBoolean("Is Tracking?", isTracking());
+        // SmartDashboard.putNumber("Cam Mode", getCameraMode());
 
         // If there is no target, we just end here
         if (!hasTarget()) {
@@ -142,9 +142,9 @@ public class Limelight extends SubsystemBase {
         double area = ta.getDouble(0.0);
 
         // Puts x, y, area to SmartDashboard
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);
+        // SmartDashboard.putNumber("LimelightX", x);
+        // SmartDashboard.putNumber("LimelightY", y);
+        // SmartDashboard.putNumber("LimelightArea", area);
 
         // Gets the horizontal distance from the target
         // System.out.println(getHorizontalDistance());

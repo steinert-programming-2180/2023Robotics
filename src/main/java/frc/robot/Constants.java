@@ -82,6 +82,8 @@ public final class Constants {
 
     public static final double counterArmTorqueSpeed = 0.05;
 
+    public static final double pidTolerance = 1;
+
     public static final PIDController pidController = new PIDController(
       0.27, 
       2607,
