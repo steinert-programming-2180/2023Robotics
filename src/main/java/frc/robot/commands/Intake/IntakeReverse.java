@@ -2,32 +2,32 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Intake;
 
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class SetSpeedLimit extends CommandBase {
+public class IntakeReverse extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final DriveTrain m_subsystem;
-  private double speedLimit = 1;
+  private final Intake intake;
+  private double speed = 0;
 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param intake The subsystem used by this command.
    */
-  public SetSpeedLimit(DriveTrain subsystem) {
-    this(1, subsystem);
+  public IntakeReverse(Intake intake) {
+    this(intake, IntakeConstants.intakeSpeed);
   }
 
-  public SetSpeedLimit(double speed, DriveTrain subsystem) {
-    m_subsystem = subsystem;
-    speedLimit = speed;
+  public IntakeReverse(Intake intake, double speed){
+    this.intake = intake;
+    this.speed = speed;
     // Use addRequirements() here to declare subsystem dependencies.
-    // addRequirements(subsystem);
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
@@ -37,13 +37,13 @@ public class SetSpeedLimit extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.setSpeedLimit(speedLimit);
+    intake.IntakeRevese(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.setSpeedLimit(0.5);
+    intake.intakeStop();
   }
 
   // Returns true when the command should end.

@@ -2,26 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Arm;
 
-import frc.robot.Constants.BreackConstants;
-import frc.robot.subsystems.Brake;
+import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class BrakeOff extends CommandBase {
+public class LowerArm extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Brake brake;
+  private final Arm arm;
 
   /**
    * Creates a new ExampleCommand.
    *
-   * @param brake The subsystem used by this command.
+   * @param arm The subsystem used by this command.
    */
-  public BrakeOff(Brake brake) {
-    this.brake = brake;
+  public LowerArm(Arm arm) {
+    this.arm = arm;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(brake);
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
@@ -31,12 +30,14 @@ public class BrakeOff extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    brake.disengageBrakes();
+    arm.lowerArm();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    arm.stopRaising();
+  }
 
   // Returns true when the command should end.
   @Override

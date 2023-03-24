@@ -34,6 +34,14 @@ public class Intake extends SubsystemBase {
     intakeSolenoid.set(Value.kForward);
   }
 
+  // You need 2 functions for closed/opened cause solenoid could also be off (neither)
+  public boolean isClosed(){
+    return intakeSolenoid.get() == Value.kReverse;
+  }
+  public boolean isOpen(){
+    return intakeSolenoid.get() == Value.kForward;
+  }
+
   public void IntakeRevese() {
     IntakeRevese(-IntakeConstants.intakeSpeed);
   }

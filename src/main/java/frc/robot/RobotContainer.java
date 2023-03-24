@@ -6,20 +6,22 @@ package frc.robot;
 
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.BrakeOff;
-import frc.robot.commands.BrakeOn;
-import frc.robot.commands.DriveForward;
-import frc.robot.commands.ExtendArm;
-import frc.robot.commands.ExtendArmByPins;
-import frc.robot.commands.IntakeOn;
-import frc.robot.commands.IntakeReverse;
-import frc.robot.commands.LowerArm;
-import frc.robot.commands.RaiseArm;
-import frc.robot.commands.RaiseArmToLowerStand;
-import frc.robot.commands.RetractArm;
-import frc.robot.commands.SetSpeedLimit;
 import frc.robot.commands.TimedCommand;
-import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.Arm.ExtendArm;
+import frc.robot.commands.Arm.ExtendArmByPins;
+import frc.robot.commands.Arm.LowerArm;
+import frc.robot.commands.Arm.RaiseArm;
+import frc.robot.commands.Arm.RaiseArmToLowerStand;
+import frc.robot.commands.Arm.RetractArm;
+import frc.robot.commands.DriveTrain.BrakeOff;
+import frc.robot.commands.DriveTrain.BrakeOn;
+import frc.robot.commands.DriveTrain.DriveForward;
+import frc.robot.commands.DriveTrain.SetSpeedLimit;
+import frc.robot.commands.DriveTrain.TurnToAngle;
+import frc.robot.commands.Intake.CloseIntake;
+import frc.robot.commands.Intake.IntakeOn;
+import frc.robot.commands.Intake.IntakeReverse;
+import frc.robot.commands.Intake.OpenIntake;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Brake;
 import frc.robot.subsystems.DriveTrain;
@@ -72,6 +74,8 @@ public class RobotContainer {
 
   private final IntakeOn intakeOn = new IntakeOn(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
+  private final CloseIntake closeIntake = new CloseIntake(intake);
+  private final OpenIntake openIntake = new OpenIntake(intake);
 
   private final BrakeOn brakeOn = new BrakeOn(brake);
   private final BrakeOff brakeOff = new BrakeOff(brake);
@@ -183,19 +187,8 @@ public class RobotContainer {
     XboxLeftTrigger.whileTrue(lowerArm);
     XboxRightTrigger.whileTrue(raiseArm);
 
-    XboxLeftPad.onTrue(
-      new RunCommand(
-      () -> intake.openIntake(),
-      intake
-      )
-    );
-
-    XboxRightPad.onTrue(
-      new RunCommand(
-        () -> intake.closeIntake(),
-        intake 
-      )
-    );
+    XboxLeftPad.onTrue(openIntake);
+    XboxRightPad.onTrue(closeIntake);
 
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
@@ -228,46 +221,13 @@ public class RobotContainer {
       new RaiseArmToLowerStand(arm, 25),
       new IntakeReverse(intake, .05)
     );
-    // return new DriveForward(drivetrain, 12);
-    // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(.1, .1);
-    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-    //     new Pose2d(0, 0, new Rotation2d()),
-    //     List.of(),
-    //     new Pose2d(1, 0, new Rotation2d()),
-    //     trajectoryConfig);
-
-    // CommandBase moveForward = new TimedCommand(new StartEndCommand(
-    //     () -> drivetrain.arcadeDrive(0.75, 0),
-    //     () -> drivetrain.arcadeDrive(0, 0),
-    //     drivetrain),
-    //     4);
-    // CommandBase raiseArmSlightly = new TimedCommand(raiseArm,.3);   
-    // CommandBase brieflyReverseIntake = new TimedCommand(new IntakeReverse(intake, 0.25), 1);
-    // return new SequentialCommandGroup(
-    //   raiseArmSlightly, brieflyReverseIntake, moveForward
-    // );
-    // An example command will be run in autonomous
-    // return Autos.exampleAuto(m_exampleSubsystem);
   }
 
   public Command newAuto(){
     arm.resetEncoders();
-    Command goToHighStand = new RaiseArmToLowerStand(arm, 67);
+    Command raiseToHighStand = new RaiseArmToLowerStand(arm, 67);
     Command extendToHigh = new TimedCommand(extendArm, 1.6);
-    Command openIntake = new TimedCommand(new RunCommand(
-      () -> intake.openIntake(),
-      intake 
-    ),
-    0.1);
-    Command closeIntake = new RunCommand(
-        () -> intake.closeIntake(),
-        intake 
-    );
-    Command goOutOfStand = new RaiseArmToLowerStand(arm, 68);
-    Command closeClaw = new TimedCommand(new RunCommand(
-      () -> intake.closeIntake(),
-      intake 
-    ), 0.1);
+    Command raiseAboveStand = new RaiseArmToLowerStand(arm, 68);
     Command retractArm = new TimedCommand(
       new RunCommand(
         () -> arm.retractArm(),
@@ -278,11 +238,11 @@ public class RobotContainer {
 
 
     return new SequentialCommandGroup(
-      goToHighStand,
+      raiseToHighStand,
       extendToHigh,
       openIntake,
-      goOutOfStand,
-      closeClaw,
+      raiseAboveStand,
+      closeIntake,
       retractArm
     );
   }
