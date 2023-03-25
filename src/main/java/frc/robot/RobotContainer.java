@@ -219,16 +219,32 @@ public class RobotContainer {
   public Command newAuto(){
     arm.resetEncoders();
     
-    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 70, 3);
+    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 67, 3);
     Command extendToHigh = new TimedCommand(extendArm, 1.6);
     Command raiseAboveStand = new RaiseArmToSetpoint(arm, arm.getArmPosition()+2);
-    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue, 2);
+    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue, 5);
     Command retractArm = new TimedCommand(
       new RunCommand(
         () -> arm.retractArm(),
         arm
       ),
-    1.4);
+    1);
+    Command driveForward = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(-0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
+    Command goSlightBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
     Command driveBackOut = new TimedCommand(
       new StartEndCommand(
         () -> drivetrain.arcadeDrive(0.75, 0), 
@@ -241,10 +257,12 @@ public class RobotContainer {
 
     return new SequentialCommandGroup(
       raiseToHighStand,
+      driveForward,
       extendToHigh,
       new OpenIntake(intake),
       retractArm,
       new CloseIntake(intake),
+      goSlightBackOut,
       goToFloor,
       driveBackOut
     );
