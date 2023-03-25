@@ -12,75 +12,43 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public final class Autos {
-  static double maxVelocityMetersPerSecond = 1;
-  static double maxAccelerationMetersPerSecondSq = 1;
+  static SendableChooser<Score> firstScore;
+  static SendableChooser<Score> secondScore;
+  static String autoMobilityTitle = "Auto Mobility"; // this is here so no silly typo breaks our auto
   public static enum Score {
+    None,
     Low,
     Mid,
     High
   }
 
-  public static TrajectoryConfig config = new TrajectoryConfig(
-    maxVelocityMetersPerSecond, 
-    maxAccelerationMetersPerSecondSq
-  );
+  public static void generateAutoChooser(){
+    firstScore = new SendableChooser<Score>();
+    firstScore.setDefaultOption("Score High", Score.High);
+    firstScore.addOption("Score Low", Score.Low);
+    firstScore.addOption("None", Score.None);
 
-  public static CommandBase exampleAuto(ExampleSubsystem subsystem) {
-    return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
+    secondScore = new SendableChooser<Score>();
+    secondScore.setDefaultOption("None", Score.None);
+    secondScore.addOption("Score Mid", Score.Mid);
+    secondScore.addOption("Score Low", Score.Low);
+    secondScore.addOption("Score High", Score.High);
+
+    SmartDashboard.putData(firstScore);
+    SmartDashboard.setDefaultBoolean(autoMobilityTitle, true);
+    SmartDashboard.putData(secondScore);
   }
 
-  public CommandBase getAuto1(){
-    
-    return new SequentialCommandGroup(
-      
-    );
-  }
-
-  /** Create Ramsete Command that Follows a Trajectory */ 
-  public static RamseteCommand followTrajectoryCommand(DriveTrain drivetrain, Trajectory trajectory){
-    RamseteController ramseteController = new RamseteController();
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
-      drivetrain::getPose, 
-      ramseteController, 
-      drivetrain.getFeedForward(), 
-      drivetrain.getKinematics(), 
-      drivetrain::getDifferentialDriveWheelSpeeds, 
-      drivetrain.getPID(), 
-      drivetrain.getPID(), 
-      drivetrain::tankDriveVolts, 
-      drivetrain
-    );
-
-    return ramseteCommand;
-  }
-
-  // scoreHigh or scoreLow
-  // backOut
-  // scoreMid, scoreLow, or scoreHigh
-
-  // EXPERIMENTAL: balance
-  void generateAutoChooser(){
-    SendableChooser<Score> sendableChooser = new SendableChooser<Score>();
-    sendableChooser.addOption("Score High", Score.High);
-    sendableChooser.addOption("Score Low", Score.Low);
-
-    SendableChooser sendableChooser2 = new SendableChooser<>();
-    sendableChooser2.addOption("Back Out", sendableChooser2);
-    sendableChooser2.addOption("Do Nothing", sendableChooser2);
-
-    SendableChooser sendableChooser3 = new SendableChooser<>();
-    sendableChooser3.addOption("Score Mid", Score.Mid);
-    sendableChooser3.addOption("Score Low", Score.Low);
-    sendableChooser3.addOption("Score High", Score.High);
-  }
+  public static Score getFirstScore(){ return firstScore.getSelected(); }
+  public static boolean willDoAutoMobility(){ return SmartDashboard.getBoolean(autoMobilityTitle, false); }
+  public static Score getSecondScore(){ return secondScore.getSelected(); }
 
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");

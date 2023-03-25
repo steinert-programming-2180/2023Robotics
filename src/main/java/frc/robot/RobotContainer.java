@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.TimedCommand;
 import frc.robot.commands.Arm.ExtendArm;
 import frc.robot.commands.Arm.ExtendArmByPins;
@@ -60,6 +61,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  ExampleSubsystem exampleSubsystem = new ExampleSubsystem(); // create this for "null" requirements
   // The robot's subsystems and commands are defined here...
   public DriveTrain drivetrain = new DriveTrain();
 
@@ -110,6 +112,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // setupDriveTrainCommand();
+    Autos.generateAutoChooser();
     configureBindings();
   }
 
@@ -210,19 +213,68 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    return new SequentialCommandGroup(
-      new RaiseArmToSetpoint(arm, 25),
-      new IntakeReverse(intake, .05)
+
+    Command emptyCommand = new TimedCommand(
+      new RunCommand(
+        () -> {},
+        exampleSubsystem
+      ),
+      0.05
     );
+    Command raiseToHighStand = new TimedCommand(raiseArm, 3);
+    Command extendToHigh = new TimedCommand(extendArm, 1.6);
+    Command goToFloor = new TimedCommand(lowerArm, 2);
+    Command retractArm = new TimedCommand(
+      new RunCommand(
+        () -> arm.retractArm(),
+        arm
+      ),
+    1.4);
+    Command driveBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.75, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      4
+    );
+
+    // TODO: might have to use empty command
+    SequentialCommandGroup autoSequence = new SequentialCommandGroup();
+
+    Autos.Score firstScore = Autos.getFirstScore();
+    switch (firstScore) {
+      case High:
+        autoSequence.addCommands(raiseToHighStand);
+        autoSequence.addCommands(extendToHigh);
+        autoSequence.addCommands(new OpenIntake(intake));
+        autoSequence.addCommands(retractArm);
+        autoSequence.addCommands(new CloseIntake(intake));
+        autoSequence.addCommands(goToFloor);
+        break;
+      case Mid:
+        break;
+      case Low:
+        autoSequence.addCommands(new RaiseArmToSetpoint(arm, 25));
+        autoSequence.addCommands(new IntakeReverse(intake, .05));
+        break;
+      case None:
+        break;
+      default:
+        break;
+    }
+
+    if(Autos.willDoAutoMobility()) autoSequence.addCommands(driveBackOut);
+
+    return autoSequence;
   }
 
   public Command newAuto(){
     arm.resetEncoders();
     
-    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 70, 3);
+    Command raiseToHighStand = new TimedCommand(raiseArm, 3);
     Command extendToHigh = new TimedCommand(extendArm, 1.6);
-    Command raiseAboveStand = new RaiseArmToSetpoint(arm, arm.getArmPosition()+2);
-    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue, 2);
+    Command goToFloor = new TimedCommand(lowerArm, 2);
     Command retractArm = new TimedCommand(
       new RunCommand(
         () -> arm.retractArm(),
