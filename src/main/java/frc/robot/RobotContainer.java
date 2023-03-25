@@ -219,10 +219,10 @@ public class RobotContainer {
   public Command newAuto(){
     arm.resetEncoders();
     
-    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 67);
+    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 70, 3);
     Command extendToHigh = new TimedCommand(extendArm, 1.6);
     Command raiseAboveStand = new RaiseArmToSetpoint(arm, arm.getArmPosition()+2);
-    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue);
+    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue, 2);
     Command retractArm = new TimedCommand(
       new RunCommand(
         () -> arm.retractArm(),
@@ -245,7 +245,8 @@ public class RobotContainer {
       new OpenIntake(intake),
       retractArm,
       new CloseIntake(intake),
-      goToFloor 
+      goToFloor,
+      driveBackOut
     );
   }
 }

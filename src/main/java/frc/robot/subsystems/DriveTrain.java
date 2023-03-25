@@ -248,8 +248,8 @@ public class DriveTrain extends SubsystemBase {
     // SmartDashboard.putNumber("X", getDistanceX());
     // SmartDashboard.putNumber("Y", getDistanceY());
     // SmartDashboard.putNumber("Z", getDistanceZ());
-    // SmartDashboard.putNumber("Left P", leftEncoder.getPosition());
-    // SmartDashboard.putNumber("Right P", rightEncoder.getPosition());
+    SmartDashboard.putNumber("Left P", leftEncoder.getPosition());
+    SmartDashboard.putNumber("Right P", rightEncoder.getPosition());
     // SmartDashboard.putNumber("V Err 2", leftMotors[1].getEncoder().getVelocity()-leftMotors[0].getEncoder().getVelocity());
     // // SmartDashboard.putNumber("Left V", leftEncoder.getVelocity());
     // // SmartDashboard.putNumber("Right V", rightEncoder.getVelocity());

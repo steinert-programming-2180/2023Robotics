@@ -16,6 +16,7 @@ public class RaiseArmToSetpoint extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Arm arm;
   double setpoint = 0;
+  double tolerance = ArmConstants.pidTolerance;
 
   /**
    * Creates a new ExampleCommand.
@@ -24,8 +25,13 @@ public class RaiseArmToSetpoint extends CommandBase {
 */
 
   public RaiseArmToSetpoint(Arm arm, double setpoint) {
+    this(arm, setpoint, 1.5);
+  }
+
+  public RaiseArmToSetpoint(Arm arm, double setpoint, double tolerance) {
     this.arm = arm;
     this.setpoint = setpoint;
+    this.tolerance = tolerance;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);
   }
@@ -34,7 +40,7 @@ public class RaiseArmToSetpoint extends CommandBase {
   @Override
   public void initialize() {
     ArmConstants.pidController.setSetpoint(setpoint);
-    ArmConstants.pidController.setTolerance(1.5);
+    ArmConstants.pidController.setTolerance(tolerance);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
