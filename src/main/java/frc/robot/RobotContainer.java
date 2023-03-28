@@ -189,7 +189,7 @@ public class RobotContainer {
     XboxUpPad.whileTrue(extendArm);
     XboxDownPad.whileTrue(retractArm);
 
-    XboxButtonPause.onTrue(brakeOn);
+    // XboxButtonPause.onTrue(brakeOn);
 
     // Auto Arm Controls
     XboxLeftBumper.onTrue(

@@ -19,6 +19,7 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     clawMotor = new CANSparkMax(IntakeConstants.intakeMotorID, MotorType.kBrushless);
+    clawMotor.setInverted(false);
     intakeSolenoid = new DoubleSolenoid(
       PneumaticConstants.pneumaticsModuleType, 
       IntakeConstants.solenoidOpenPort,

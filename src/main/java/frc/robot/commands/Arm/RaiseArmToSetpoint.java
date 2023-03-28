@@ -46,14 +46,16 @@ public class RaiseArmToSetpoint extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Arm", arm.getArmPosition());
-    SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
-    SmartDashboard.putBoolean("Arm Raising FInished", isFinished());
-
+    putDataToSmartDashboard();
 
     double feedForwardCalc = ArmConstants.armFeedForward.calculate(arm.getArmPosition(), 0.5);
     double pidCalc = ArmConstants.pidController.calculate(arm.getArmPosition());
     arm.setRaiserVoltage(feedForwardCalc + pidCalc);
+  }
+
+  public void putDataToSmartDashboard(){
+    SmartDashboard.putNumber("Arm", arm.getArmPosition());
+    SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
   }
 
   // Called once the command ends or is interrupted.
