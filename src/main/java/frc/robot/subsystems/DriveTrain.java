@@ -58,7 +58,7 @@ public class DriveTrain extends SubsystemBase {
 
     setupMotors();
     setupDriveTrainSensors();
-    setPositionConversion();
+    // setPositionConversion();
 
     leftMotorGroup = new MotorControllerGroup(leftMotors);
     rightMotorGroup = new MotorControllerGroup(rightMotors);
@@ -221,8 +221,12 @@ public class DriveTrain extends SubsystemBase {
     }
   }
   
-  public double getDistanceX(){
-    return navx.getDisplacementX();
+  public double getDistanceInMeters(){
+    return - (leftEncoder.getPosition() + Units.inchesToMeters(10) );
+  }
+
+  public double getDistanceInInches(){
+    return Units.metersToInches(getDistanceInMeters());
   }
 
   public double getDistanceY(){
@@ -250,6 +254,7 @@ public class DriveTrain extends SubsystemBase {
     // SmartDashboard.putNumber("Z", getDistanceZ());
     SmartDashboard.putNumber("Left P", leftEncoder.getPosition());
     SmartDashboard.putNumber("Right P", rightEncoder.getPosition());
+    SmartDashboard.putNumber("Distance INches", getDistanceInInches());
     // SmartDashboard.putNumber("V Err 2", leftMotors[1].getEncoder().getVelocity()-leftMotors[0].getEncoder().getVelocity());
     // // SmartDashboard.putNumber("Left V", leftEncoder.getVelocity());
     // // SmartDashboard.putNumber("Right V", rightEncoder.getVelocity());

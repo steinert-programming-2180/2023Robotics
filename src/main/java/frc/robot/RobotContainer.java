@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.TimedCommand;
 import frc.robot.commands.Arm.ExtendArm;
 import frc.robot.commands.Arm.ExtendArmByPins;
@@ -18,6 +19,7 @@ import frc.robot.commands.DriveTrain.BrakeOff;
 import frc.robot.commands.DriveTrain.BrakeOn;
 import frc.robot.commands.DriveTrain.DriveForward;
 import frc.robot.commands.DriveTrain.SetSpeedLimit;
+import frc.robot.commands.DriveTrain.TravelForward;
 import frc.robot.commands.DriveTrain.TurnToAngle;
 import frc.robot.commands.Intake.CloseIntake;
 import frc.robot.commands.Intake.IntakeOn;
@@ -37,6 +39,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -319,5 +322,83 @@ public class RobotContainer {
       goToFloor,
       driveBackOut
     );
+  }
+
+  public Command twoAuto(){
+    arm.resetEncoders();
+    
+    Command raiseToHighStand = new RaiseArmToSetpoint(arm, 67, 3);
+    Command extendToHigh = new TimedCommand(extendArm, 1.6);
+    Command raiseAboveStand = new RaiseArmToSetpoint(arm, arm.getArmPosition()+2);
+    Command goToFloor = new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue, 5);
+    Command retractArm = new TimedCommand(
+      new RunCommand(
+        () -> arm.retractArm(),
+        arm
+      ),
+    1);
+    Command driveForward = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(-0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
+    Command goSlightBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
+    Command rotate =  new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0, .75),
+        () -> drivetrain.arcadeDrive(0, 0),
+        drivetrain
+      ),
+      .95
+    );
+    Command driveBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.75, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      3
+    );
+
+
+    return new SequentialCommandGroup(
+      raiseToHighStand,
+      driveForward,
+      extendToHigh,
+      new OpenIntake(intake),
+      retractArm,
+      new CloseIntake(intake),
+      goSlightBackOut,
+      goToFloor,
+      driveBackOut,
+      rotate
+    );
+  }
+
+  public Command testOutDriveTrainEncoders(){
+    drivetrain.resetSensors();
+
+     return new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(-0.5, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      4
+    );
+  }
+
+  public Command otherTest(){
+    return new TravelForward(drivetrain, Units.inchesToMeters(120));
   }
 }
