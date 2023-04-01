@@ -81,6 +81,9 @@ public final class Constants {
     public static final double armExtensionSpeed = 0.7;
 
     public static final double counterArmTorqueSpeed = 0.05;
+    
+    public static final double armLengthInInches = 47;
+    public static final double armStartAngle = 13;
 
     public static final double pidTolerance = 1;
 

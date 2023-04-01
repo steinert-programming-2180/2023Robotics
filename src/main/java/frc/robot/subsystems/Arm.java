@@ -13,9 +13,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.TelescopeConstants;
 
@@ -59,24 +57,26 @@ public class Arm extends SubsystemBase {
     resetEncoders();
   }
 
-  public boolean isOverExtending() {
-    // return extensionLimitSwitch.get();
-    return false;
+  private double getPositionConversion(double motorRPM){
+    double totalGearRatio = 5 * 3 * 3 * 3;
+    double outputRotations = motorRPM / totalGearRatio;
+    /* 
+    * 1 full rotation = 360
+    * .5 rotation = 180
+    * .25 rotation = 90
+    * 
+    */
+    return rotationAngleToHeight(outputRotations);
   }
 
-  public boolean isOverRetracting() {
-    // return retractionLimitSwitch.get();
-    return false;
-  }
+  private double rotationAngleToHeight(double angleInDegrees){
+    double angleInRadians = Math.toRadians(angleInDegrees);
+    
+    double r = ArmConstants.armLengthInInches;
+    double yCoordinateFromAngle = r * Math.sin(angleInRadians); 
 
-  public boolean isOverRaising() {
-    // return raisingLimitSwitch.get();
-    return false;
-  }
-
-  public boolean isOverLowering() {
-    // return loweringLimitSwitch.get();
-    return false;
+    double height = yCoordinateFromAngle + r; // add r to make sure height is never below 0
+    return height;
   }
 
   public void resetEncoders() {
@@ -91,23 +91,19 @@ public class Arm extends SubsystemBase {
 
 
   public void raiseArm() {
-    double armSpeed = isOverRaising() ? getCounterTorqueSpeed():ArmConstants.armLiftingSpeed;
-    m_armRaiserMotor.set(armSpeed);
+    m_armRaiserMotor.set(ArmConstants.armLiftingSpeed);
   }
 
   public void lowerArm() {
-    double armSpeed = isOverLowering() ? getCounterTorqueSpeed():ArmConstants.armFallingSpeed;
-    m_armRaiserMotor.set(-armSpeed);
+    m_armRaiserMotor.set(-ArmConstants.armFallingSpeed);
   }
 
   public void extendArm() {
-    double speed = isOverExtending() ? getCounterTorqueSpeed():ArmConstants.armExtensionSpeed;
-    m_armExtenderMotor.set(-speed);
+    m_armExtenderMotor.set(-ArmConstants.armExtensionSpeed);
   }
 
   public void retractArm() {
-    double speed = isOverRetracting() ? getCounterTorqueSpeed():ArmConstants.armExtensionSpeed;
-    m_armExtenderMotor.set(speed);
+    m_armExtenderMotor.set(ArmConstants.armExtensionSpeed);
   }
 
   public void stopExtension(){m_armExtenderMotor.set(0);}
