@@ -36,7 +36,7 @@ public class LowerArm extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.stopRaising();
+    arm.counterTorque();
   }
 
   // Returns true when the command should end.
