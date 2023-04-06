@@ -373,15 +373,56 @@ public class RobotContainer {
 
     return new SequentialCommandGroup(
       raiseToHighStand,
+      new TimedCommand(new ExampleCommand(exampleSubsystem), .5),
       driveForward,
       extendToHigh,
       new OpenIntake(intake),
       retractArm,
       new CloseIntake(intake),
+      new TimedCommand(new ExampleCommand(exampleSubsystem), .5),
       goSlightBackOut,
       goToFloor,
-      driveBackOut,
-      rotate
+      new TimedCommand(new ExampleCommand(exampleSubsystem), .5),
+      driveBackOut
+    );
+  }
+
+  public Command testAuto(){
+    arm.resetEncoders();
+    Command driveForward = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(-0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
+    Command goSlightBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.4, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      .5
+    );
+
+    Command driveBackOut = new TimedCommand(
+      new StartEndCommand(
+        () -> drivetrain.arcadeDrive(0.75, 0), 
+        () -> drivetrain.arcadeDrive(0, 0), 
+        drivetrain
+      ), 
+      3
+    );
+
+    Command randomTimer = new TimedCommand(new ExampleCommand(exampleSubsystem), 2);
+
+
+    return new SequentialCommandGroup(
+      driveForward,
+      new TimedCommand(new ExampleCommand(exampleSubsystem), 2),
+      goSlightBackOut,
+      driveBackOut
     );
   }
 
