@@ -367,7 +367,7 @@ public class RobotContainer {
         () -> drivetrain.arcadeDrive(0, 0), 
         drivetrain
       ), 
-      3
+      3.6
     );
 
 
