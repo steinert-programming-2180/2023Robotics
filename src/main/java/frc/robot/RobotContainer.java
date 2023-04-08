@@ -32,7 +32,17 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDLights;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -40,6 +50,14 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DataLogIterator;
+import edu.wpi.first.util.datalog.DataLogReader;
+import edu.wpi.first.util.datalog.DataLogRecord;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,6 +108,9 @@ public class RobotContainer {
   Joystick leftJoystick = new Joystick(OperatorConstants.leftJoystickPort);
   Joystick rightJoystick = new Joystick(OperatorConstants.rightJoystickPort);
   XboxController operatorController = new XboxController(OperatorConstants.operatorControllerPort);
+  XboxController testDONOTUSEController = new XboxController(3);
+
+  JoystickButton testButtonB = new JoystickButton(testDONOTUSEController, XboxController.Button.kB.value);
 
   JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
   JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
@@ -156,6 +177,21 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    testButtonB.onTrue(
+      new RunCommand(
+        () -> {
+          try {
+            bw.close();
+            fw.close();
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        },
+        exampleSubsystem
+      )
+    );
+    
     rightButtonThree.and(leftButtonThree).whileTrue(new SetSpeedLimit(0.15, drivetrain));
 
     rightButtonThree.or(leftButtonThree).whileTrue(
@@ -441,5 +477,101 @@ public class RobotContainer {
 
   public Command otherTest(){
     return new TravelForward(drivetrain, Units.inchesToMeters(120));
+  }
+
+  HashMap<String, ArrayList> f = new HashMap<String, ArrayList>();
+  File file;
+  BufferedWriter bw;
+  FileWriter fw;
+  String path = "/home/lvuser/test.json";
+  String path2 = System.getProperty("user.dir") + "test.wpilog";
+
+  DoubleLogEntry myDoubleLog;
+  StringLogEntry myStringLog;
+  /*
+   * MUST BE IN A PERIODIC FUNCTION
+   */
+  public void startRecordPlayerActions(){
+    // {
+    //   "Drivetrain Left": [ [ , ], [ , ] ],
+    //   "Drivetrain Right": [ [ , ], []],
+    //   "Arm Raising": [  ],
+    //   "Arm Extension": [ ],
+    //   "Intake": [ ],
+    //   "isIntakeClosed": []
+    // }
+    DataLogManager.start();
+    DataLog dLog = DataLogManager.getLog();
+    DriverStation.startDataLog(dLog);
+    myDoubleLog = new DoubleLogEntry(dLog, "/my/double");
+    myStringLog = new StringLogEntry(dLog, "/my/string");
+
+    f.put("Drivetrain Left", new ArrayList<ArrayList<Double>>());
+    f.put("Drivetrain Right", new ArrayList<ArrayList<Double>>());
+    f.put("Arm Raising", new ArrayList<Double>());
+    f.put("Arm Extension", new ArrayList<Double>());
+    f.put("Intake", new ArrayList<Double>());
+    f.put("isIntakeClosed", new ArrayList<Boolean>());
+
+    try {
+      file = new File(path);
+      if(!file.exists()){
+        file.createNewFile();
+      }
+      fw = new FileWriter(file);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    bw = new BufferedWriter(fw);
+  }
+
+  public void teleopRecord(){
+    double[] leftMotors = {drivetrain.getLeft1Speed(), drivetrain.getLeft2Speed()};
+    double[] rightMotors = {drivetrain.getRight1Speed(), drivetrain.getRight2Speed()};
+    f.get("Drivetrain Left").add(leftMotors);
+    f.get("Drivetrain Right").add(rightMotors);
+    f.get("Arm Raising").add(arm.getArmRaisingMotorSpeed());
+    f.get("Arm Extension").add(arm.getArmExtensionMotorSpeed());
+    f.get("Intake").add(intake.getIntakeSpeed());
+    f.get("isIntakeClosed").add(intake.isClosed());
+
+    myDoubleLog.append(drivetrain.getLeft1Speed());
+
+    DataLogReader a = new DataLogReader(path);
+
+    DataLogIterator b = a.iterator();
+    a.forEach( (DataLogRecord ad) -> {
+      ad.
+    } );
+    b.forEachRemaining( (DataLogRecord lol) -> {
+    } );
+
+    try{
+      System.out.println(file.canWrite());
+      bw.write("Hellow, I'm a text file");
+			// bw.close();
+			// fw.close();
+
+      // FileWriter myFileWriter = new FileWriter(path);
+      // myFileWriter.write(f.toString());
+      // myFileWriter.close();
+
+      // ObjectMapper mapper = new ObjectMapper();
+      // mapper.writeValue(new File("/home/lvuser/test.json"), f);
+    } catch (IOException e){
+      System.out.println(e);
+    }
+  }
+
+  public void readRecorded(){
+    Scanner myScanner;
+    try {
+      myScanner = new Scanner(file);
+      while(myScanner.hasNextLine()){
+        System.out.println(myScanner.nextLine());
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -75,6 +75,38 @@ public class DriveTrain extends SubsystemBase {
     setSpeedLimit(0.5);
   }
 
+  public double getLeft1Speed(){
+    return leftMotors[0].get();
+  }
+
+  public void setLeft1Speed(double speed){
+    leftMotors[0].set(speed);
+  }
+
+  public double getLeft2Speed(){
+    return leftMotors[1].get();
+  }
+
+  public void setLeft2Speed(double speed){
+    leftMotors[1].set(speed);
+  }
+
+  public double getRight1Speed(){
+    return rightMotors[0].get();
+  }
+
+  public void setRight1Speed(double speed){
+    rightMotors[0].set(speed);
+  }
+
+  public double getRight2Speed(){
+    return rightMotors[1].get();
+  }
+
+  public void setRight2Speed(double speed){
+    rightMotors[1].set(speed);
+  }
+
   public float getYawRotation(){
     return navx.getYaw();
   }

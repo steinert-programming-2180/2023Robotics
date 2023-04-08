@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -116,6 +118,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_robotContainer.startRecordPlayerActions();
     limelight = new Limelight();
     m_robotContainer.setupDriveTrainCommand();
     // m_robotContainer.drivetrain.resetSensors(); 
@@ -136,13 +139,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    m_robotContainer.teleopRecord();
     SmartDashboard.putNumber("Pressure", compressor.getPressure());
-
   }
 
   @Override
   public void testInit() {
-    m_robotContainer.arm.testInit();
+    // m_robotContainer.arm.testInit();
+
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
@@ -150,7 +154,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    m_robotContainer.arm.testPeriodic();
+    // m_robotContainer.arm.testPeriodic();
   }
 
   /** This function is called once when the robot is first started up. */

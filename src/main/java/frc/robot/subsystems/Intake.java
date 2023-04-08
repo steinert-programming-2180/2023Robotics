@@ -27,6 +27,14 @@ public class Intake extends SubsystemBase {
     );
   }
 
+  public double getIntakeSpeed(){
+    return clawMotor.get();
+  }
+
+  public void setIntakeSpeed(double speed){
+    clawMotor.set(speed);
+  }
+
   public void closeIntake(){
     intakeSolenoid.set(Value.kReverse);
   }

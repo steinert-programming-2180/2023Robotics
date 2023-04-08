@@ -90,6 +90,22 @@ public class Arm extends SubsystemBase {
   // }
 
 
+  public double getArmRaisingMotorSpeed(){
+    return m_armRaiserMotor.get();
+  }
+
+  public double getArmExtensionMotorSpeed(){
+    return m_armRaiserMotor.get();
+  }
+
+  public void setArmRaisingMotorSpeed(double speed){
+    m_armRaiserMotor.set(speed);
+  }
+
+  public void setArmExtensionMotorSpeed(double speed){
+    m_armExtenderMotor.set(speed);
+  }
+
   public void raiseArm() {
     m_armRaiserMotor.set(ArmConstants.armLiftingSpeed);
   }
@@ -177,7 +193,7 @@ public class Arm extends SubsystemBase {
     TelescopeConstants.telescopePidController.setSetpoint(24);
 
     // armFeedforward = new ArmFeedforward(s, g, v, a);
-
+    
     SmartDashboard.putNumber("Arm", getArmPosition());
     SmartDashboard.putNumber("Error", ArmConstants.pidController.getPositionError());
 
