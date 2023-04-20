@@ -35,12 +35,16 @@ import frc.robot.subsystems.LEDLights;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -177,21 +181,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    testButtonB.onTrue(
-      new RunCommand(
-        () -> {
-          try {
-            bw.close();
-            fw.close();
-          } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-        },
-        exampleSubsystem
-      )
-    );
-    
     rightButtonThree.and(leftButtonThree).whileTrue(new SetSpeedLimit(0.15, drivetrain));
 
     rightButtonThree.or(leftButtonThree).whileTrue(
@@ -483,7 +472,7 @@ public class RobotContainer {
   File file;
   BufferedWriter bw;
   FileWriter fw;
-  String path = "/home/lvuser/test.json";
+  String path = "/home/lvuser/test.wpilog";
   String path2 = System.getProperty("user.dir") + "test.wpilog";
 
   DoubleLogEntry myDoubleLog;
@@ -492,6 +481,27 @@ public class RobotContainer {
    * MUST BE IN A PERIODIC FUNCTION
    */
   public void startRecordPlayerActions(){
+    DataLogManager.start();
+    DataLog dLog = DataLogManager.getLog();
+    DriverStation.startDataLog(dLog);
+    myDoubleLog = new DoubleLogEntry(dLog, "/my/double");
+    myStringLog = new StringLogEntry(dLog, "/my/string");
+
+    initializeHashMap();
+
+    // try {
+    //   file = new File(path);
+    //   if(!file.exists()){
+    //     file.createNewFile();
+    //   }
+    //   fw = new FileWriter(file);
+    // } catch (IOException e) {
+    //   e.printStackTrace();
+    // }
+    // bw = new BufferedWriter(fw);
+  }
+
+  public void initializeHashMap(){
     // {
     //   "Drivetrain Left": [ [ , ], [ , ] ],
     //   "Drivetrain Right": [ [ , ], []],
@@ -500,11 +510,6 @@ public class RobotContainer {
     //   "Intake": [ ],
     //   "isIntakeClosed": []
     // }
-    DataLogManager.start();
-    DataLog dLog = DataLogManager.getLog();
-    DriverStation.startDataLog(dLog);
-    myDoubleLog = new DoubleLogEntry(dLog, "/my/double");
-    myStringLog = new StringLogEntry(dLog, "/my/string");
 
     f.put("Drivetrain Left", new ArrayList<ArrayList<Double>>());
     f.put("Drivetrain Right", new ArrayList<ArrayList<Double>>());
@@ -512,20 +517,10 @@ public class RobotContainer {
     f.put("Arm Extension", new ArrayList<Double>());
     f.put("Intake", new ArrayList<Double>());
     f.put("isIntakeClosed", new ArrayList<Boolean>());
-
-    try {
-      file = new File(path);
-      if(!file.exists()){
-        file.createNewFile();
-      }
-      fw = new FileWriter(file);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    bw = new BufferedWriter(fw);
   }
 
-  public void teleopRecord(){
+  // IN PERIODIC
+  public void populateHashMap(){
     double[] leftMotors = {drivetrain.getLeft1Speed(), drivetrain.getLeft2Speed()};
     double[] rightMotors = {drivetrain.getRight1Speed(), drivetrain.getRight2Speed()};
     f.get("Drivetrain Left").add(leftMotors);
@@ -534,44 +529,92 @@ public class RobotContainer {
     f.get("Arm Extension").add(arm.getArmExtensionMotorSpeed());
     f.get("Intake").add(intake.getIntakeSpeed());
     f.get("isIntakeClosed").add(intake.isClosed());
+  }
+
+  // IN TELEOP INIT
+  public void writeFile(){
+    // System.out.println(f.toString());
+    JSONObject jsonObject = new JSONObject(f);
+    System.out.println(jsonObject.toString());
+
+    try {
+      file = new File(path);
+      if(!file.exists()){
+        file.createNewFile();
+      }
+      fw = new FileWriter(file);
+      fw.write(jsonObject.toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void teleopRecord(){
+    populateHashMap();
 
     myDoubleLog.append(drivetrain.getLeft1Speed());
-
-    DataLogReader a = new DataLogReader(path);
-
-    DataLogIterator b = a.iterator();
-    a.forEach( (DataLogRecord ad) -> {
-      ad.
-    } );
-    b.forEachRemaining( (DataLogRecord lol) -> {
-    } );
 
     try{
       System.out.println(file.canWrite());
       bw.write("Hellow, I'm a text file");
-			// bw.close();
-			// fw.close();
-
-      // FileWriter myFileWriter = new FileWriter(path);
-      // myFileWriter.write(f.toString());
-      // myFileWriter.close();
-
-      // ObjectMapper mapper = new ObjectMapper();
-      // mapper.writeValue(new File("/home/lvuser/test.json"), f);
     } catch (IOException e){
       System.out.println(e);
     }
   }
 
-  public void readRecorded(){
+  Map<String, Object> recordedInstructions;
+  boolean isReadyToBeRead = false;
+  HashMap<String, Integer> myMap;
+  Long startTime;
+
+  public void initReadFile(){
+    startTime = System.currentTimeMillis();
+    myMap = new HashMap<String,Integer>();
+    myMap.put("Drivetrain Left", 0);
+    myMap.put("Drivetrain Right", 0);
+    
+
+    file = new File("/home/lvuser/test.json");
+    String myContent = "";
     Scanner myScanner;
     try {
       myScanner = new Scanner(file);
       while(myScanner.hasNextLine()){
+        myContent += myScanner.nextLine();
         System.out.println(myScanner.nextLine());
       }
+
+      JSONObject jsonObject = new JSONObject(myContent);
+      recordedInstructions = jsonObject.toMap();
+      isReadyToBeRead = true;      
+
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
+  }
+
+  public void followJSONObject(){
+    if(!isReadyToBeRead) return;
+    if(System.currentTimeMillis() - startTime < 60) return;
+
+    ArrayList<ArrayList<Double>> driveLeft = (ArrayList<ArrayList<Double>>) recordedInstructions.get("Drivetrain Left");
+    ArrayList<ArrayList<Double>> driveRight = (ArrayList<ArrayList<Double>>) recordedInstructions.get("Drivetrain Right");
+
+    int drivetrainLeftIndex = myMap.get("Drivetrain Left");
+    int drivetrainRightIndex = myMap.get("Drivetrain Right");
+
+    double leftSpeed1 = driveLeft.get(drivetrainLeftIndex).get(0);
+    double leftSpeed2 = driveLeft.get(drivetrainLeftIndex).get(1);
+
+    double rightSpeed1 = driveRight.get(drivetrainRightIndex).get(0);
+    double rightSpeed2 = driveRight.get(drivetrainRightIndex).get(1);
+
+    drivetrain.setLeft1Speed(leftSpeed1);
+    drivetrain.setLeft2Speed(leftSpeed2);
+    drivetrain.setRight1Speed(rightSpeed1);
+    drivetrain.setRight2Speed(rightSpeed2);
+
+    myMap.put("Drivetrain Left", drivetrainLeftIndex+1);
+    myMap.put("Drivetrain Right", drivetrainRightIndex+1);
   }
 }

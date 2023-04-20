@@ -90,42 +90,33 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.twoAuto();
-    // m_robotContainer.drivetrain.resetSensors();
-    // pidController.setSetpoint(0.12);
+    m_robotContainer.initReadFile();
+    // m_robotContainer.startRecordPlayerActions();
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    m_robotContainer.drivetrain.resetSensors();
+    // m_autonomousCommand = m_robotContainer.twoAuto();
+    // // pidController.setSetpoint(0.12);
 
-    // pidCommand = new PIDCommand(
-    //   pidController, 
-    //   m_robotContainer.drivetrain::getDistanceX, 
-    //   2, 
-    //   output -> m_robotContainer.drivetrain.arcadeDrive(output, 0),
-    //   m_robotContainer.drivetrain
-    // );
+    // // schedule the autonomous command (example)
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // double speed = pidController.calculate(m_robotContainer.drivetrain.getDistanceX());
-    // SmartDashboard.putNumber("speed", speed);
-    // m_robotContainer.drivetrain.tankDrive(speed, Math.min(1.05*speed, 1));
+    m_robotContainer.followJSONObject();
+    // m_robotContainer.readWPI();
+    // m_robotContainer.populateHashMap();
   }
 
   @Override
   public void teleopInit() {
-    m_robotContainer.startRecordPlayerActions();
+    // m_robotContainer.startRecordPlayerActions();
+    // m_robotContainer.writeFile();
     limelight = new Limelight();
     m_robotContainer.setupDriveTrainCommand();
-    // m_robotContainer.drivetrain.resetSensors(); 
-
-    // TODO: remove this after testing
-    // m_robotContainer.drivetrain.arcadeDrive(0, 0);
-    // m_robotContainer.intake.closeIntake();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -139,7 +130,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.teleopRecord();
+    // m_robotContainer.teleopRecord();
     SmartDashboard.putNumber("Pressure", compressor.getPressure());
   }
 

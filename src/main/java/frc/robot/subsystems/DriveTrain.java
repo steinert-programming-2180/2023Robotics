@@ -81,6 +81,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void setLeft1Speed(double speed){
     leftMotors[0].set(speed);
+    difDrive.feed();
   }
 
   public double getLeft2Speed(){
@@ -89,6 +90,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void setLeft2Speed(double speed){
     leftMotors[1].set(speed);
+    difDrive.feed();
   }
 
   public double getRight1Speed(){
@@ -97,6 +99,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void setRight1Speed(double speed){
     rightMotors[0].set(speed);
+    difDrive.feed();
   }
 
   public double getRight2Speed(){
@@ -105,6 +108,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void setRight2Speed(double speed){
     rightMotors[1].set(speed);
+    difDrive.feed();
   }
 
   public float getYawRotation(){
