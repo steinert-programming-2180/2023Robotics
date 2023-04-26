@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("v", ArmConstants.armFeedForward.kv);
     // SmartDashboard.putNumber("a", ArmConstants.armFeedForward.ka);
 
+    // m_robotContainer.initReadFile();
+
     CameraServer.startAutomaticCapture(0); // Starts Camera for the Claw
   }
 
@@ -90,33 +92,31 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robotContainer.initReadFile();
+    // m_robotContainer.initReadFile();
     // m_robotContainer.startRecordPlayerActions();
 
     m_robotContainer.drivetrain.resetSensors();
-    // m_autonomousCommand = m_robotContainer.twoAuto();
+    m_autonomousCommand = m_robotContainer.twoAuto(); //getDSFollow
     // // pidController.setSetpoint(0.12);
 
     // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_robotContainer.followJSONObject();
     // m_robotContainer.readWPI();
     // m_robotContainer.populateHashMap();
   }
 
   @Override
   public void teleopInit() {
-    // m_robotContainer.startRecordPlayerActions();
-    // m_robotContainer.writeFile();
     limelight = new Limelight();
     m_robotContainer.setupDriveTrainCommand();
+    // m_robotContainer.initializeHashMap();
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

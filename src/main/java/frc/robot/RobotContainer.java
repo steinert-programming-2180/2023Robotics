@@ -8,6 +8,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.FollowRecordedAuto;
 import frc.robot.commands.TimedCommand;
 import frc.robot.commands.Arm.ExtendArm;
 import frc.robot.commands.Arm.ExtendArmByPins;
@@ -201,9 +202,9 @@ public class RobotContainer {
     (leftTrigger.and(rightTrigger)).whileTrue(new SetSpeedLimit(drivetrain));
     (leftTrigger.or(rightTrigger)).whileTrue(new SetSpeedLimit(0.75, drivetrain));
 
-    XboxButtonY.toggleOnTrue(ledLights.turnOnYellowCommand());
+    // XboxButtonY.toggleOnTrue(ledLights.turnOnYellowCommand());
     XboxButtonX.toggleOnTrue(ledLights.turnOnPurpleCommand());
-    (XboxButtonX.and(XboxButtonY)).onTrue(ledLights.turnOffLEDsCommand());
+    // (XboxButtonX.and(XboxButtonY)).onTrue(ledLights.turnOffLEDsCommand());
 
     XboxButtonA.whileTrue(intakeOn);
     XboxButtonB.whileTrue(intakeReverse);
@@ -475,42 +476,7 @@ public class RobotContainer {
   String path = "/home/lvuser/test.wpilog";
   String path2 = System.getProperty("user.dir") + "test.wpilog";
 
-  DoubleLogEntry myDoubleLog;
-  StringLogEntry myStringLog;
-  /*
-   * MUST BE IN A PERIODIC FUNCTION
-   */
-  public void startRecordPlayerActions(){
-    DataLogManager.start();
-    DataLog dLog = DataLogManager.getLog();
-    DriverStation.startDataLog(dLog);
-    myDoubleLog = new DoubleLogEntry(dLog, "/my/double");
-    myStringLog = new StringLogEntry(dLog, "/my/string");
-
-    initializeHashMap();
-
-    // try {
-    //   file = new File(path);
-    //   if(!file.exists()){
-    //     file.createNewFile();
-    //   }
-    //   fw = new FileWriter(file);
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
-    // bw = new BufferedWriter(fw);
-  }
-
   public void initializeHashMap(){
-    // {
-    //   "Drivetrain Left": [ [ , ], [ , ] ],
-    //   "Drivetrain Right": [ [ , ], []],
-    //   "Arm Raising": [  ],
-    //   "Arm Extension": [ ],
-    //   "Intake": [ ],
-    //   "isIntakeClosed": []
-    // }
-
     f.put("Drivetrain Left", new ArrayList<ArrayList<Double>>());
     f.put("Drivetrain Right", new ArrayList<ArrayList<Double>>());
     f.put("Arm Raising", new ArrayList<Double>());
@@ -549,16 +515,12 @@ public class RobotContainer {
     }
   }
 
+  boolean onlyOnce = true;
   public void teleopRecord(){
     populateHashMap();
-
-    myDoubleLog.append(drivetrain.getLeft1Speed());
-
-    try{
-      System.out.println(file.canWrite());
-      bw.write("Hellow, I'm a text file");
-    } catch (IOException e){
-      System.out.println(e);
+    if(XboxButtonY.getAsBoolean() && onlyOnce){
+      System.out.println((new JSONObject(f)).toString());
+      onlyOnce = false;
     }
   }
 
@@ -588,6 +550,8 @@ public class RobotContainer {
       recordedInstructions = jsonObject.toMap();
       isReadyToBeRead = true;      
 
+      myScanner.close();
+
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -616,5 +580,9 @@ public class RobotContainer {
 
     myMap.put("Drivetrain Left", drivetrainLeftIndex+1);
     myMap.put("Drivetrain Right", drivetrainRightIndex+1);
+  }
+
+  public CommandBase getDSFollow(){
+    return new FollowRecordedAuto(drivetrain);
   }
 }

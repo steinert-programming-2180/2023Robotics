@@ -75,6 +75,9 @@ public class DriveTrain extends SubsystemBase {
     setSpeedLimit(0.5);
   }
 
+  public void disableSafety(){ difDrive.setSafetyEnabled(false); }
+  public void enableSafety(){ difDrive.setSafetyEnabled(true); }
+
   public double getLeft1Speed(){
     return leftMotors[0].get();
   }
