@@ -9,6 +9,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.FollowRecordedAuto;
+import frc.robot.commands.RecordAutoPath;
 import frc.robot.commands.TimedCommand;
 import frc.robot.commands.Arm.ExtendArm;
 import frc.robot.commands.Arm.ExtendArmByPins;
@@ -113,9 +114,6 @@ public class RobotContainer {
   Joystick leftJoystick = new Joystick(OperatorConstants.leftJoystickPort);
   Joystick rightJoystick = new Joystick(OperatorConstants.rightJoystickPort);
   XboxController operatorController = new XboxController(OperatorConstants.operatorControllerPort);
-  XboxController testDONOTUSEController = new XboxController(3);
-
-  JoystickButton testButtonB = new JoystickButton(testDONOTUSEController, XboxController.Button.kB.value);
 
   JoystickButton XboxButtonA = new JoystickButton(operatorController, XboxController.Button.kA.value);
   JoystickButton XboxButtonB = new JoystickButton(operatorController, XboxController.Button.kB.value);
@@ -124,6 +122,7 @@ public class RobotContainer {
   JoystickButton XboxButtonPause = new JoystickButton(operatorController, XboxController.Button.kStart.value); // looks like three lines on controller
   JoystickButton XboxButtonMap = new JoystickButton(operatorController, XboxController.Button.kBack.value); // looks like two squares on controller
   JoystickButton XboxLeftStickButton = new JoystickButton(operatorController, XboxController.Button.kLeftStick.value);
+  JoystickButton XboxRightStickButton = new JoystickButton(operatorController, XboxController.Button.kRightStick.value);
 
   JoystickButton XboxLeftBumper = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
   JoystickButton XboxRightBumper = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
@@ -202,9 +201,9 @@ public class RobotContainer {
     (leftTrigger.and(rightTrigger)).whileTrue(new SetSpeedLimit(drivetrain));
     (leftTrigger.or(rightTrigger)).whileTrue(new SetSpeedLimit(0.75, drivetrain));
 
-    // XboxButtonY.toggleOnTrue(ledLights.turnOnYellowCommand());
+    XboxButtonY.toggleOnTrue(ledLights.turnOnYellowCommand());
     XboxButtonX.toggleOnTrue(ledLights.turnOnPurpleCommand());
-    // (XboxButtonX.and(XboxButtonY)).onTrue(ledLights.turnOffLEDsCommand());
+    (XboxButtonX.and(XboxButtonY)).onTrue(ledLights.turnOffLEDsCommand());
 
     XboxButtonA.whileTrue(intakeOn);
     XboxButtonB.whileTrue(intakeReverse);
@@ -227,9 +226,13 @@ public class RobotContainer {
     XboxButtonMap.onTrue(
       new RaiseArmToSetpoint(arm, ArmConstants.substationArmEncoderValue)
     );
+    // XboxLeftStickButton.onTrue(
+    //   new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue)
+    // );
     XboxLeftStickButton.onTrue(
-      new RaiseArmToSetpoint(arm, ArmConstants.bottomFloorArmEncoderValue)
+      new RecordAutoPath(drivetrain, arm, intake, XboxRightStickButton)  
     );
+
     XboxRightBumper.onTrue(
       new RaiseArmToSetpoint(arm, ArmConstants.highFloorArmEncoderValue)
     );
@@ -467,119 +470,6 @@ public class RobotContainer {
 
   public Command otherTest(){
     return new TravelForward(drivetrain, Units.inchesToMeters(120));
-  }
-
-  HashMap<String, ArrayList> f = new HashMap<String, ArrayList>();
-  File file;
-  BufferedWriter bw;
-  FileWriter fw;
-  String path = "/home/lvuser/test.wpilog";
-  String path2 = System.getProperty("user.dir") + "test.wpilog";
-
-  public void initializeHashMap(){
-    f.put("Drivetrain Left", new ArrayList<ArrayList<Double>>());
-    f.put("Drivetrain Right", new ArrayList<ArrayList<Double>>());
-    f.put("Arm Raising", new ArrayList<Double>());
-    f.put("Arm Extension", new ArrayList<Double>());
-    f.put("Intake", new ArrayList<Double>());
-    f.put("isIntakeClosed", new ArrayList<Boolean>());
-  }
-
-  // IN PERIODIC
-  public void populateHashMap(){
-    double[] leftMotors = {drivetrain.getLeft1Speed(), drivetrain.getLeft2Speed()};
-    double[] rightMotors = {drivetrain.getRight1Speed(), drivetrain.getRight2Speed()};
-    f.get("Drivetrain Left").add(leftMotors);
-    f.get("Drivetrain Right").add(rightMotors);
-    f.get("Arm Raising").add(arm.getArmRaisingMotorSpeed());
-    f.get("Arm Extension").add(arm.getArmExtensionMotorSpeed());
-    f.get("Intake").add(intake.getIntakeSpeed());
-    f.get("isIntakeClosed").add(intake.isClosed());
-  }
-
-  // IN TELEOP INIT
-  public void writeFile(){
-    // System.out.println(f.toString());
-    JSONObject jsonObject = new JSONObject(f);
-    System.out.println(jsonObject.toString());
-
-    try {
-      file = new File(path);
-      if(!file.exists()){
-        file.createNewFile();
-      }
-      fw = new FileWriter(file);
-      fw.write(jsonObject.toString());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  boolean onlyOnce = true;
-  public void teleopRecord(){
-    populateHashMap();
-    if(XboxButtonY.getAsBoolean() && onlyOnce){
-      System.out.println((new JSONObject(f)).toString());
-      onlyOnce = false;
-    }
-  }
-
-  Map<String, Object> recordedInstructions;
-  boolean isReadyToBeRead = false;
-  HashMap<String, Integer> myMap;
-  Long startTime;
-
-  public void initReadFile(){
-    startTime = System.currentTimeMillis();
-    myMap = new HashMap<String,Integer>();
-    myMap.put("Drivetrain Left", 0);
-    myMap.put("Drivetrain Right", 0);
-    
-
-    file = new File("/home/lvuser/test.json");
-    String myContent = "";
-    Scanner myScanner;
-    try {
-      myScanner = new Scanner(file);
-      while(myScanner.hasNextLine()){
-        myContent += myScanner.nextLine();
-        System.out.println(myScanner.nextLine());
-      }
-
-      JSONObject jsonObject = new JSONObject(myContent);
-      recordedInstructions = jsonObject.toMap();
-      isReadyToBeRead = true;      
-
-      myScanner.close();
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void followJSONObject(){
-    if(!isReadyToBeRead) return;
-    if(System.currentTimeMillis() - startTime < 60) return;
-
-    ArrayList<ArrayList<Double>> driveLeft = (ArrayList<ArrayList<Double>>) recordedInstructions.get("Drivetrain Left");
-    ArrayList<ArrayList<Double>> driveRight = (ArrayList<ArrayList<Double>>) recordedInstructions.get("Drivetrain Right");
-
-    int drivetrainLeftIndex = myMap.get("Drivetrain Left");
-    int drivetrainRightIndex = myMap.get("Drivetrain Right");
-
-    double leftSpeed1 = driveLeft.get(drivetrainLeftIndex).get(0);
-    double leftSpeed2 = driveLeft.get(drivetrainLeftIndex).get(1);
-
-    double rightSpeed1 = driveRight.get(drivetrainRightIndex).get(0);
-    double rightSpeed2 = driveRight.get(drivetrainRightIndex).get(1);
-
-    drivetrain.setLeft1Speed(leftSpeed1);
-    drivetrain.setLeft2Speed(leftSpeed2);
-    drivetrain.setRight1Speed(rightSpeed1);
-    drivetrain.setRight2Speed(rightSpeed2);
-
-    myMap.put("Drivetrain Left", drivetrainLeftIndex+1);
-    myMap.put("Drivetrain Right", drivetrainRightIndex+1);
   }
 
   public CommandBase getDSFollow(){

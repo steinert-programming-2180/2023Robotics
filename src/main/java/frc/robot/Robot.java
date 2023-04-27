@@ -92,11 +92,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // m_robotContainer.initReadFile();
-    // m_robotContainer.startRecordPlayerActions();
-
     m_robotContainer.drivetrain.resetSensors();
-    m_autonomousCommand = m_robotContainer.twoAuto(); //getDSFollow
+    m_autonomousCommand = m_robotContainer.getDSFollow(); //getDSFollow
     // // pidController.setSetpoint(0.12);
 
     // // schedule the autonomous command (example)
